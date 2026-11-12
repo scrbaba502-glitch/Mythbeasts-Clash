@@ -23,6 +23,11 @@ export async function loadRiggedCharacter(fighter, url, { scale = 1, rotationY =
   });
 
   fighter.animator?.destroy();
+  fighter.root.traverse(node => {
+    if (!node.isMesh) return;
+    node.geometry?.dispose();
+    for (const material of Array.isArray(node.material) ? node.material : [node.material]) material?.dispose();
+  });
   fighter.root.clear();
   fighter.root.add(model);
   fighter.animator = new AnimationStateController(model, gltf.animations, { fadeSeconds });
