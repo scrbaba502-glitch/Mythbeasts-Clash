@@ -28,6 +28,7 @@ export class CombatSystem {
     if (now < this.cooldowns[action]) return;
     if (action === "attack") {
       this.cooldowns.attack = now + .58;
+      this.arena.triggerAttack();
       const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
       if (distance < 3.7) this.damageRival(9);
       else this.announce("OUT OF REACH — CLOSE THE DISTANCE");
@@ -36,6 +37,7 @@ export class CombatSystem {
       this.cooldowns.dodge = now + .92;
       this.invulnerableUntil = now + .48;
       this.dodgeUntil = now + .25;
+      this.arena.triggerDodge();
       this.announce("PHASE DODGE — REPOSITION");
     }
     if (action === "skill") {
