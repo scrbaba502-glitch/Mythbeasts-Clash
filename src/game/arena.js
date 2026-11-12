@@ -223,7 +223,11 @@ export class Arena {
     this.dodgeUntil = this.time + .24;
   }
   triggerAttack() { this.attackUntil = this.time + .36; this.player.animator?.play("attack"); }
-  triggerRivalAttack() { this.rivalAttackUntil = this.time + .56; this.rival.animator?.play("bossWindup") || this.rival.animator?.play("attack"); }
+  triggerRivalAttack(duration = .62) {
+    this.rivalAttackDuration = duration;
+    this.rivalAttackUntil = this.time + duration;
+    this.rival.animator?.play("bossWindup") || this.rival.animator?.play("attack");
+  }
   triggerRivalStrike() { this.rival.animator?.play("attack"); }
   setBossTelegraph(active, radius = 4.4) {
     this.bossTelegraph.visible = Boolean(active);
@@ -300,7 +304,7 @@ export class Arena {
     this.rival.animator?.setLocomotion(rivalMoving);
     this.rival.animator?.update(dt);
     const rivalWindup = this.time < this.rivalAttackUntil;
-    const rivalAttackProgress = rivalWindup ? 1 - (this.rivalAttackUntil - this.time) / .56 : 0;
+    const rivalAttackProgress = rivalWindup ? 1 - (this.rivalAttackUntil - this.time) / (this.rivalAttackDuration || .62) : 0;
     this.rival.limbs.arms[0].rotation.x += ((rivalWindup ? -.95 * Math.sin(rivalAttackProgress * Math.PI) : 0) - this.rival.limbs.arms[0].rotation.x) * Math.min(1, dt * 18);
     this.rival.root.rotation.z += ((this.time < this.rivalHitUntil ? .12 : 0) - this.rival.root.rotation.z) * Math.min(1, dt * 18);
     this.player.root.rotation.z += ((this.time < this.playerHitUntil ? -.1 : 0) - this.player.root.rotation.z) * Math.min(1, dt * 18);

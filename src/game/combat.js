@@ -105,7 +105,7 @@ export class CombatSystem {
         const radius = this.telegraphKind === "slam" ? 5.35 : 4.4;
         this.telegraphAt = now + windup;
         this.arena.setBossTelegraph?.(true, radius);
-        this.arena.triggerRivalAttack();
+        this.arena.triggerRivalAttack(windup);
         this.announce(this.telegraphKind === "slam"
           ? "ABYSS SLAM — ESCAPE THE MARK"
           : "ATROX WINDS UP — DODGE");

@@ -15,7 +15,7 @@
 - [x] Add crossfading skeletal animation-state controller and named clip mapping
 - [x] Add attack anticipation / active / recovery timing and directional hit confirmation
 - [x] Add adaptive boss approach, spacing, orbit, and engagement-range telegraphs
-- [x] Add visible ground danger markers and phase-two Abyss Slam attack pattern
+- [x] Add visible ground danger markers and phase-two Abyss Slam attack pattern with matched windup/impact timing
 - [x] Add player action commitment windows, hit stun with movement suppression, and late-asset teardown protection
 - [x] Ensure dodge cancels unresolved attack/skill commitments
 - [x] Ensure encounter completion clears active boss telegraph indicators

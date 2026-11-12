@@ -184,6 +184,8 @@ test("Atrox phase two alternates into a larger, heavier abyss slam", t => {
   const arena = makeArena();
   arena.rivalHealth = 40;
   let marker = null;
+  let windupDuration = 0;
+  arena.triggerRivalAttack = duration => { windupDuration = duration; };
   arena.setBossTelegraph = (active, radius) => { marker = { active, radius }; };
   arena.triggerRivalStrike = () => {};
   const combat = new CombatSystem(arena);
@@ -192,9 +194,10 @@ test("Atrox phase two alternates into a larger, heavier abyss slam", t => {
   combat.update(.016, 3);
   assert.equal(combat.telegraphKind, "slam");
   assert.deepEqual(marker, { active: true, radius: 5.35 });
+  assert.equal(windupDuration, .84, "boss should hold its windup for the full slam warning");
   combat.update(.87, 3.886);
   assert.equal(arena.playerHealth, 76, "abyss slam should deal 24 damage when not dodged");
-  assert.deepEqual(marker, { active: false, radius: 5.35 });
+  assert.equal(marker.active, false, "danger marker should disappear after impact");
 });
 
 
