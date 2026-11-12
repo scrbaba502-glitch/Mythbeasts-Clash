@@ -189,7 +189,7 @@ export class Arena {
     else this.dodgeVector.copy(this.player.root.position).sub(this.rival.root.position).setY(0).normalize();
     this.dodgeUntil = this.time + .24;
   }
-  triggerAttack() { this.attackUntil = this.time + .24; }
+  triggerAttack() { this.attackUntil = this.time + .36; }
   onFrame(callback) { this.frames.push(callback); }
 
   update(dt) {
@@ -209,7 +209,9 @@ export class Arena {
       p.z = clamp(p.z + this.dodgeVector.z * dt * 8.2, -8.3, 8.3);
     }
     const attacking = this.time < this.attackUntil;
-    this.player.weapon.rotation.z += ((attacking ? -.95 : 0) - this.player.weapon.rotation.z) * Math.min(1, dt * 16);
+    const attackProgress = attacking ? 1 - (this.attackUntil - this.time) / .36 : 0;
+    const swing = attacking ? -Math.sin(attackProgress * Math.PI) * 1.25 : 0;
+    this.player.weapon.rotation.z += (swing - this.player.weapon.rotation.z) * Math.min(1, dt * 20);
     const moving = inputLength > .12;
     if (moving) this.player.root.rotation.y = Math.atan2(dx, dz);
     const dist = p.distanceTo(this.rival.root.position);
