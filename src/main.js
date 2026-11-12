@@ -27,11 +27,7 @@ async function boot() {
     // Validate the world contract before constructing the scene or enabling combat.
     const environment = await loadEnvironmentManifest();
     const arena = new Arena(document.querySelector("#world"), { gameplayBounds: environment });
-    const environmentAssets = await loadEnvironmentAssets(arena.scene, await (async () => {
-      const response = await fetch("/assets/environments/manifest.json");
-      if (!response.ok) throw new Error(`Environment manifest unavailable (${response.status})`);
-      return response.json();
-    })(), {
+    const environmentAssets = await loadEnvironmentAssets(arena.scene, environment, {
       onAssetError: (asset, error) => console.warn(`Environment asset failed: ${asset.id}`, error)
     });
     if (environmentAssets.pending.length) {
