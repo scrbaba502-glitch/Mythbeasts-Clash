@@ -43,6 +43,7 @@ export class CombatSystem {
     }
     if (action === "skill") {
       this.cooldowns.skill = now + 5;
+      this.arena.player.animator?.play("skill");
       this.pendingSkill = { resolveAt: now + .32 };
       this.announce("EMBER BURST — RELEASE");
     }
@@ -102,6 +103,13 @@ export class CombatSystem {
 
   finish(won) {
     this.ended = true;
+    if (won) {
+      this.arena.player.animator?.play("victory");
+      this.arena.rival.animator?.play("defeat");
+    } else {
+      this.arena.player.animator?.play("defeat");
+      this.arena.rival.animator?.play("victory");
+    }
     this.arena.combatActive = false;
     this.arena.setMoveInput(0, 0);
     this.announce(won ? "THE FIRST SEAL IS BROKEN" : "THE TITAN PREVAILS");
