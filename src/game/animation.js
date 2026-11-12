@@ -14,9 +14,16 @@ const CLIP_ALIASES = {
   defeat: ["defeat", "death", "lose"],
   bossWindup: ["bosswindup", "windup", "telegraph", "charge"]
 };
-
 const ONE_SHOT = new Set(["attack", "attack2", "attack3", "dodge", "hit", "stagger", "skill", "victory", "defeat", "bossWindup"]);
 const normalize = value => String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+export function hasAnimationClip(requiredName, clips = []) {
+  const required = normalize(requiredName);
+  if (!required) return false;
+  const aliases = Object.entries(CLIP_ALIASES).find(([state]) => normalize(state) === required)?.[1] || [];
+  const acceptedNames = new Set([required, ...aliases.map(normalize)]);
+  return clips.some(clip => acceptedNames.has(normalize(clip?.name)));
+}
 
 export class AnimationStateController {
   constructor(model, clips = [], { fadeSeconds = .12, onStateChange = null } = {}) {
@@ -32,17 +39,11 @@ export class AnimationStateController {
     this.destroyed = false;
     this.finished = event => {
       if (event.action === this.currentAction && ONE_SHOT.has(this.state) &&
-          this.state !== "victory" && this.state !== "defeat") {
-        this.play(this.moving ? "locomotion" : "idle");
-      }
+          this.state !== "victory" && this.state !== "defeat") this.play(this.moving ? "locomotion" : "idle");
     };
     this.mixer.addEventListener("finished", this.finished);
-
     for (const [state, aliases] of Object.entries(CLIP_ALIASES)) {
-      const clip = clips.find(candidate => {
-        const name = normalize(candidate.name);
-        return aliases.some(alias => name === normalize(alias));
-      });
+      const clip = clips.find(candidate => aliases.some(alias => normalize(candidate.name) === normalize(alias)));
       if (!clip) continue;
       const action = this.mixer.clipAction(clip);
       action.enabled = true;
@@ -54,9 +55,7 @@ export class AnimationStateController {
     this.currentAction = null;
     this.play("idle");
   }
-
   has(state) { return this.actions.has(state); }
-
   play(state, { force = false, fadeSeconds = this.fadeSeconds } = {}) {
     if (this.destroyed || !this.actions.has(state)) return false;
     if (!force && this.state === state && this.currentAction?.isRunning()) return true;
@@ -71,27 +70,22 @@ export class AnimationStateController {
     this.onStateChange?.(state);
     return true;
   }
-
   setLocomotion(moving) {
     this.moving = Boolean(moving);
-    if (this.state === "attack" || this.state === "dodge" || this.state === "hit" ||
-        this.state === "stagger" || this.state === "skill" || this.state === "victory" ||
-        this.state === "defeat" || this.state === "bossWindup") return;
+    if (["attack", "dodge", "hit", "stagger", "skill", "victory", "defeat", "bossWindup"].includes(this.state)) return;
     this.play(this.moving ? "locomotion" : "idle");
   }
-
   update(dt) {
     if (this.destroyed) return;
     const delta = Math.max(0, Math.min(dt, .05));
     this.mixer.update(delta);
-    if (ONE_SHOT.has(this.state) && this.state !== "victory" && this.state !== "defeat") {
+    if (ONE_SHOT.has(this.state) && this.state !== "victory" && this.state !== "defeat" &&
+        this.stateElapsed + delta >= (this.actionDurations.get(this.state) || Infinity)) {
+      this.play(this.moving ? "locomotion" : "idle");
+    } else if (ONE_SHOT.has(this.state) && this.state !== "victory" && this.state !== "defeat") {
       this.stateElapsed += delta;
-      if (this.stateElapsed >= (this.actionDurations.get(this.state) || Infinity)) {
-        this.play(this.moving ? "locomotion" : "idle");
-      }
     }
   }
-
   destroy() {
     if (this.destroyed) return;
     this.destroyed = true;
