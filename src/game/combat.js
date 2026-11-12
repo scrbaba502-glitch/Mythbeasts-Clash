@@ -1,0 +1,87 @@
+export class CombatSystem {
+  constructor(arena) {
+    this.arena = arena;
+    this.cooldowns = { attack: 0, dodge: 0, skill: 0 };
+    this.invulnerableUntil = 0;
+    this.dodgeUntil = 0;
+    this.skillLabel = document.querySelector("#skill-cooldown");
+    this.playerBar = document.querySelector("#player-health");
+    this.rivalBar = document.querySelector("#rival-health");
+    this.message = document.querySelector("#battle-message");
+    this.phase = document.querySelector("#phase-label");
+    this.ended = false;
+    this.bossAttackAt = 2.6;
+    this.telegraphAt = 0;
+    this.perform = this.perform.bind(this);
+  }
+
+  announce(text) { this.message.textContent = text; }
+
+  perform(action) {
+    if (this.ended) return;
+    const now = this.arena.time;
+    if (action === "camera") {
+      this.arena.cameraMode = (this.arena.cameraMode + 1) % 3;
+      this.announce(["BATTLEFIELD VIEW", "CHAMPION VIEW", "RIVAL VIEW"][this.arena.cameraMode]);
+      return;
+    }
+    if (now < this.cooldowns[action]) return;
+    if (action === "attack") {
+      this.cooldowns.attack = now + .58;
+      const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
+      if (distance < 3.7) this.damageRival(9);
+      else this.announce("OUT OF REACH — CLOSE THE DISTANCE");
+    }
+    if (action === "dodge") {
+      this.cooldowns.dodge = now + .92;
+      this.invulnerableUntil = now + .48;
+      this.dodgeUntil = now + .25;
+      this.announce("PHASE DODGE — REPOSITION");
+    }
+    if (action === "skill") {
+      this.cooldowns.skill = now + 5;
+      const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
+      if (distance < 7.2) this.damageRival(22);
+      else this.announce("EMBER BURST — TARGET OUT OF RANGE");
+    }
+  }
+
+  damageRival(amount) {
+    this.arena.rivalHealth = Math.max(0, this.arena.rivalHealth - amount);
+    this.rivalBar.style.width = this.arena.rivalHealth + "%";
+    this.arena.rival.glowMat.emissiveIntensity = 3.2;
+    this.announce("STRIKE CONFIRMED");
+    if (this.arena.rivalHealth === 0) this.finish(true);
+    else if (this.arena.rivalHealth <= 50) {
+      this.phase.textContent = "ATROX · ABYSS UNBOUND";
+      this.announce("THE ABYSS AWAKENS — SECOND PHASE");
+    }
+  }
+
+  update(dt, now) {
+    if (this.ended) return;
+    this.skillLabel.textContent = this.cooldowns.skill > now ? this.cooldowns.skill - now + "s" : "READY";
+    this.arena.rival.glowMat.emissiveIntensity += (1.7 - this.arena.rival.glowMat.emissiveIntensity) * Math.min(1, dt * 8);
+    if (now >= this.bossAttackAt) {
+      this.bossAttackAt = now + (this.arena.rivalHealth <= 50 ? 1.9 : 2.6);
+      this.telegraphAt = now + .52;
+      this.announce("ATROX WINDS UP — DODGE");
+    }
+    if (this.telegraphAt && now >= this.telegraphAt) {
+      this.telegraphAt = 0;
+      const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
+      if (distance < 4.4 && now > this.invulnerableUntil) {
+        this.arena.playerHealth = Math.max(0, this.arena.playerHealth - (this.arena.rivalHealth <= 50 ? 18 : 12));
+        this.playerBar.style.width = this.arena.playerHealth + "%";
+        this.announce("ATROX CONNECTS — FIND YOUR OPENING");
+        if (this.arena.playerHealth === 0) this.finish(false);
+      } else if (distance < 4.4) this.announce("PERFECT DODGE");
+    }
+  }
+
+  finish(won) {
+    this.ended = true;
+    this.announce(won ? "THE FIRST SEAL IS BROKEN" : "THE TITAN PREVAILS");
+    this.phase.textContent = won ? "VICTORY" : "DEFEAT";
+  }
+}
