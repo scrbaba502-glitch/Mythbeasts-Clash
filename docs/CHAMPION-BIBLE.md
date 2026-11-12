@@ -96,3 +96,24 @@ Every champion needs:
 ## Asset acceptance gate
 
 A champion is not production-ready until the model, rig, materials, animation states, combat hitboxes, and in-game camera read have all been reviewed together. A static concept image or a greybox mesh is not a completed fighter.
+
+## Technical animation delivery contract
+
+The runtime accepts GLB assets under `public/assets/characters/<character>/`. Keep each character's animation clips in the same GLB and on the same deform skeleton. Clip names are case-insensitive; the runtime maps these aliases:
+
+| Runtime state | Accepted clip names |
+|---|---|
+| idle | Idle, Breathing, Stand |
+| locomotion | Run, Walk, Locomotion, Move |
+| attack | Attack, LightAttack, Strike |
+| dodge | Dodge, Roll, Dash |
+| hit | Hit, HitReact, Damage |
+| stagger | Stagger, Stun |
+| skill | Skill, Special, Ability |
+| victory | Victory, Win |
+| defeat | Defeat, Death, Lose |
+| bossWindup | Windup, Telegraph, Charge |
+
+One-shot actions should be authored with clear anticipation and recovery. Locomotion clips should be in-place so the gameplay controller remains authoritative for world movement. Root motion is not enabled in this first integration. Missing clips safely fall back to the prototype model or the current available animation state; they must not crash the encounter.
+
+Before accepting a champion asset, test every clip in the actual isometric camera, verify the ground contact and facing direction, inspect material/texture memory, and confirm that crossfades do not introduce pose pops.
