@@ -242,18 +242,34 @@ export class Arena {
     const dist = p.distanceTo(this.rival.root.position);
     this.player.animator?.setLocomotion(moving);
     this.player.animator?.update(dt);
-    this.rival.animator?.setLocomotion(dist > 3.1);
-    this.rival.animator?.update(dt);
     if (moving) this.player.root.rotation.y = Math.atan2(this.playerVelocity.x, this.playerVelocity.z);
     else if (this.combatActive !== false && this.time >= this.attackUntil) {
       const toward = this.rival.root.position.clone().sub(p).setY(0);
       if (toward.lengthSq() > .01) this.player.root.rotation.y = Math.atan2(toward.x, toward.z);
     }
-    if (dist > 2.6 && this.time >= this.rivalAttackUntil) {
-      const toward = p.clone().sub(this.rival.root.position).setY(0).normalize();
-      this.rival.root.position.addScaledVector(toward, dt * (dist > 5 ? 1.15 : .42));
-      this.rival.root.rotation.y = Math.atan2(-toward.x, -toward.z);
+    let rivalMoving = false;
+    if (this.time >= this.rivalAttackUntil) {
+      const toward = p.clone().sub(this.rival.root.position).setY(0);
+      const distance = toward.length();
+      if (distance > .001) {
+        toward.normalize();
+        const facingYaw = Math.atan2(-toward.x, -toward.z);
+        this.rival.root.rotation.y = facingYaw;
+        if (distance > 4.1) {
+          this.rival.root.position.addScaledVector(toward, dt * (distance > 6.5 ? 1.45 : .92));
+          rivalMoving = true;
+        } else if (distance < 2.9) {
+          this.rival.root.position.addScaledVector(toward, -dt * .58);
+          rivalMoving = true;
+        } else if (distance > 3.25 && Math.sin(this.time * .72) > -.45) {
+          const orbit = new THREE.Vector3(-toward.z, 0, toward.x);
+          this.rival.root.position.addScaledVector(orbit, dt * .34 * (Math.sin(this.time * .5) >= 0 ? 1 : -1));
+          rivalMoving = true;
+        }
+      }
     }
+    this.rival.animator?.setLocomotion(rivalMoving);
+    this.rival.animator?.update(dt);
     const rivalWindup = this.time < this.rivalAttackUntil;
     const rivalAttackProgress = rivalWindup ? 1 - (this.rivalAttackUntil - this.time) / .56 : 0;
     this.rival.limbs.arms[0].rotation.x += ((rivalWindup ? -.95 * Math.sin(rivalAttackProgress * Math.PI) : 0) - this.rival.limbs.arms[0].rotation.x) * Math.min(1, dt * 18);
