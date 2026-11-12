@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { getMissingRequiredClips } from "../src/game/characters.js";
 
 const manifestUrl = new URL("../public/assets/characters/manifest.json", import.meta.url);
 const manifest = JSON.parse(await readFile(manifestUrl, "utf8"));
@@ -43,4 +44,20 @@ test("roster asset paths and clip names are unique and valid", () => {
     assert.equal(new Set(entry.requiredClips).size, entry.requiredClips.length);
     assert.equal(new Set(entry.optionalClips).size, entry.optionalClips.length);
   }
+});
+
+test("runtime asset gate accepts normalized clip-name variants", () => {
+  const missing = getMissingRequiredClips(
+    ["Idle", "Locomotion", "Attack2", "BossWindup"],
+    [{ name: "idle" }, { name: "Run" }, { name: "combo_2" }, { name: "Wind Up" }]
+  );
+  assert.deepEqual(missing, []);
+});
+
+test("runtime asset gate reports every missing required clip", () => {
+  const missing = getMissingRequiredClips(
+    ["Idle", "Attack", "Attack2", "Attack3"],
+    [{ name: "Idle" }, { name: "Attack" }]
+  );
+  assert.deepEqual(missing, ["Attack2", "Attack3"]);
 });
