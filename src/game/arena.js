@@ -128,6 +128,9 @@ export class Arena {
     this.playerHealth = 100;
     this.rivalHealth = 100;
     this.move = { x: 0, y: 0 };
+    this.dodgeVector = new THREE.Vector3();
+    this.dodgeUntil = 0;
+    this.attackUntil = 0;
     this.frames = [];
     this.time = 0;
     this.cameraMode = 0;
@@ -179,6 +182,14 @@ export class Arena {
   }
 
   setMoveInput(x, y) { this.move.x = x; this.move.y = y; }
+  triggerDodge() {
+    const sx = this.move.x, sy = this.move.y;
+    const dx = sx * .72 + sy * .69, dz = sx * -.69 + sy * .72;
+    if (Math.hypot(dx, dz) > .12) this.dodgeVector.set(dx, 0, dz).normalize();
+    else this.dodgeVector.copy(this.player.root.position).sub(this.rival.root.position).setY(0).normalize();
+    this.dodgeUntil = this.time + .24;
+  }
+  triggerAttack() { this.attackUntil = this.time + .24; }
   onFrame(callback) { this.frames.push(callback); }
 
   update(dt) {
@@ -193,6 +204,12 @@ export class Arena {
     const p = this.player.root.position;
     p.x = clamp(p.x + dx * dt * 4.2, -10.4, 10.4);
     p.z = clamp(p.z + dz * dt * 4.2, -8.3, 8.3);
+    if (this.time < this.dodgeUntil) {
+      p.x = clamp(p.x + this.dodgeVector.x * dt * 8.2, -10.4, 10.4);
+      p.z = clamp(p.z + this.dodgeVector.z * dt * 8.2, -8.3, 8.3);
+    }
+    const attacking = this.time < this.attackUntil;
+    this.player.weapon.rotation.z += ((attacking ? -.95 : 0) - this.player.weapon.rotation.z) * Math.min(1, dt * 16);
     const moving = inputLength > .12;
     if (moving) this.player.root.rotation.y = Math.atan2(dx, dz);
     const dist = p.distanceTo(this.rival.root.position);
