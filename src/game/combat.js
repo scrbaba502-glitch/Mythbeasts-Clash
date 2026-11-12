@@ -125,6 +125,7 @@ export class CombatSystem {
         this.arena.playerHealth = Math.max(0, this.arena.playerHealth - damage);
         this.arena.triggerPlayerHit();
         this.playerStunnedUntil = now + .38;
+        this.arena.playerControlLockedUntil = this.playerStunnedUntil;
         this.playerBar.style.width = this.arena.playerHealth + "%";
         this.announce("ATROX CONNECTS — FIND YOUR OPENING");
         if (this.arena.playerHealth === 0) this.finish(false);
