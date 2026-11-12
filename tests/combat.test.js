@@ -193,3 +193,23 @@ test("Atrox phase two alternates into a larger, heavier abyss slam", t => {
   assert.equal(arena.playerHealth, 76, "abyss slam should deal 24 damage when not dodged");
   assert.deepEqual(marker, { active: false, radius: 5.35 });
 });
+
+
+test("ending an encounter clears any active boss danger marker", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  let markerVisible = true;
+  arena.setBossTelegraph = active => { markerVisible = active; };
+  const combat = new CombatSystem(arena);
+  combat.telegraphAt = 5;
+  combat.finish(true);
+  assert.equal(combat.telegraphAt, 0);
+  assert.equal(markerVisible, false);
+});
