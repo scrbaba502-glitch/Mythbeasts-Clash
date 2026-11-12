@@ -128,6 +128,7 @@ export class Arena {
     this.playerHealth = 100;
     this.rivalHealth = 100;
     this.move = { x: 0, y: 0 };
+    this.playerVelocity = new THREE.Vector3();
     this.dodgeVector = new THREE.Vector3();
     this.dodgeUntil = 0;
     this.attackUntil = 0;
@@ -208,10 +209,13 @@ export class Arena {
     const dx = sx * .72 + sy * .69;
     const dz = sx * -.69 + sy * .72;
     const p = this.player.root.position;
-    if (this.combatActive !== false) {
-      p.x = clamp(p.x + dx * dt * 4.2, -10.4, 10.4);
-      p.z = clamp(p.z + dz * dt * 4.2, -8.3, 8.3);
-    }
+    const targetVelocity = this.combatActive !== false
+      ? new THREE.Vector3(dx * 4.2, 0, dz * 4.2)
+      : new THREE.Vector3();
+    const response = 1 - Math.exp(-dt * (inputLength > .12 ? 12 : 17));
+    this.playerVelocity.lerp(targetVelocity, response);
+    p.x = clamp(p.x + this.playerVelocity.x * dt, -10.4, 10.4);
+    p.z = clamp(p.z + this.playerVelocity.z * dt, -8.3, 8.3);
     if (this.time < this.dodgeUntil) {
       p.x = clamp(p.x + this.dodgeVector.x * dt * 8.2, -10.4, 10.4);
       p.z = clamp(p.z + this.dodgeVector.z * dt * 8.2, -8.3, 8.3);
@@ -220,8 +224,9 @@ export class Arena {
     const attackProgress = attacking ? 1 - (this.attackUntil - this.time) / .36 : 0;
     const swing = attacking ? -Math.sin(attackProgress * Math.PI) * 1.25 : 0;
     this.player.weapon.rotation.z += (swing - this.player.weapon.rotation.z) * Math.min(1, dt * 20);
-    const moving = inputLength > .12;
-    if (moving) this.player.root.rotation.y = Math.atan2(dx, dz);
+    const speed = Math.hypot(this.playerVelocity.x, this.playerVelocity.z);
+    const moving = speed > .2;
+    if (moving) this.player.root.rotation.y = Math.atan2(this.playerVelocity.x, this.playerVelocity.z);
     const dist = p.distanceTo(this.rival.root.position);
     if (dist > 2.6 && this.time >= this.rivalAttackUntil) {
       const toward = p.clone().sub(this.rival.root.position).setY(0).normalize();
@@ -237,13 +242,13 @@ export class Arena {
     this.rival.bodyMat.emissiveIntensity = this.time < this.rivalHitUntil ? 1.2 : 0;
     this.player.bodyMat.emissive.setHex(this.time < this.playerHitUntil ? 0x28516a : 0x000000);
     this.player.bodyMat.emissiveIntensity = this.time < this.playerHitUntil ? .8 : 0;
-    this.player.root.position.y = Math.sin(this.time * 2.3) * .025;
+    this.player.root.position.y = Math.sin(this.time * (moving ? 11 : 2.3)) * (moving ? .035 : .018);
     this.rival.root.position.y = Math.sin(this.time * 1.8 + .8) * .035;
     this.player.limbs.legs.forEach((leg, i) => {
-      leg.rotation.x = Math.sin(this.time * 10 + i * Math.PI) * (moving ? .42 : .025);
+      leg.rotation.x = Math.sin(this.time * (8 + speed * 1.5) + i * Math.PI) * Math.min(.48, speed * .105);
     });
     this.player.limbs.arms.forEach((arm, i) => {
-      arm.rotation.x = Math.sin(this.time * 10 + i * Math.PI) * (moving ? .16 : .035);
+      arm.rotation.x = Math.sin(this.time * (8 + speed * 1.5) + i * Math.PI) * Math.min(.2, speed * .045);
     });
     const focus = this.cameraMode === 1 ? p.clone() :
       this.cameraMode === 2 ? this.rival.root.position.clone() :
