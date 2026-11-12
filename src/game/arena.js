@@ -81,8 +81,9 @@ function makeFighter({ color, glow, scale = 1, x = 0, z = 0, boss = false }) {
 }
 
 export class Arena {
-  constructor(host) {
+  constructor(host, { gameplayBounds = null } = {}) {
     this.host = host;
+    this.gameplayBounds = gameplayBounds || { halfWidth: 10.4, halfDepth: 8.3 };
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("#090e1c");
     this.scene.fog = new THREE.Fog("#090e1c", 24, 54);
@@ -340,11 +341,11 @@ export class Arena {
       : new THREE.Vector3();
     const response = 1 - Math.exp(-dt * (inputLength > .12 ? 12 : 17));
     this.playerVelocity.lerp(targetVelocity, response);
-    p.x = clamp(p.x + this.playerVelocity.x * dt, -10.4, 10.4);
-    p.z = clamp(p.z + this.playerVelocity.z * dt, -8.3, 8.3);
+    p.x = clamp(p.x + this.playerVelocity.x * dt, -this.gameplayBounds.halfWidth, this.gameplayBounds.halfWidth);
+    p.z = clamp(p.z + this.playerVelocity.z * dt, -this.gameplayBounds.halfDepth, this.gameplayBounds.halfDepth);
     if (this.time < this.dodgeUntil) {
-      p.x = clamp(p.x + this.dodgeVector.x * dt * 8.2, -10.4, 10.4);
-      p.z = clamp(p.z + this.dodgeVector.z * dt * 8.2, -8.3, 8.3);
+      p.x = clamp(p.x + this.dodgeVector.x * dt * 8.2, -this.gameplayBounds.halfWidth, this.gameplayBounds.halfWidth);
+      p.z = clamp(p.z + this.dodgeVector.z * dt * 8.2, -this.gameplayBounds.halfDepth, this.gameplayBounds.halfDepth);
     }
     const attacking = this.time < this.attackUntil;
     const attackProgress = attacking ? 1 - (this.attackUntil - this.time) / (this.attackDuration || .36) : 0;
