@@ -17,7 +17,7 @@
 - [x] Add adaptive boss approach, spacing, orbit, and engagement-range telegraphs
 - [x] Add visible ground danger markers and phase-two Abyss Slam attack pattern with matched windup/impact timing
 - [x] Add player action commitment windows, hit stun with movement suppression, and late-asset teardown protection
-- [x] Ensure dodge cancels unresolved attack/skill commitments
+- [x] Let dodge interrupt an active attack/skill commitment while preserving locks on other action pairs
 - [x] Ensure encounter completion clears active boss telegraph indicators
 - [x] Preserve authored victory and defeat final poses after terminal animation clips
 - [x] Reorder CI so fast static checks run before Android SDK provisioning

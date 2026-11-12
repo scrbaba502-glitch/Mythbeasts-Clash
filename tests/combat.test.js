@@ -236,8 +236,8 @@ test("dodge cancels an unresolved attack and skill commitment", t => {
   const combat = new CombatSystem(arena);
   combat.perform("attack");
   assert.ok(combat.pendingAttack);
-  combat.arena.time = .4;
-  combat.actionLockUntil = .4;
+  combat.pendingSkill = { resolveAt: 1 };
+  combat.arena.time = .05;
   combat.perform("dodge");
   assert.equal(combat.pendingAttack, null);
   assert.equal(combat.pendingSkill, null);

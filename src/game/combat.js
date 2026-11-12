@@ -31,7 +31,8 @@ export class CombatSystem {
       this.announce(["BATTLEFIELD VIEW", "CHAMPION VIEW", "RIVAL VIEW"][this.arena.cameraMode]);
       return;
     }
-    if (now < this.cooldowns[action] || now < this.actionLockUntil || now < this.playerStunnedUntil) return;
+    if (now < this.cooldowns[action] || now < this.playerStunnedUntil ||
+        (action !== "dodge" && now < this.actionLockUntil)) return;
     if (action === "attack") {
       this.cooldowns.attack = now + .58;
       this.arena.triggerAttack();
