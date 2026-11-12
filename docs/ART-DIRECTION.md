@@ -1,10 +1,10 @@
 # MYTHBEASTS CLASH — Master Art Direction
 
-<escape>**Status:** LOCKED by project owner  
+**Status:** LOCKED by project owner  
 **Selection:** A + C + E + F  
 **Character design:** Realistic creatures with detailed organic anatomy  
 **Environment scale:** Huge cinematic environments  
-**Atmosphere:** Balanced dark/mysterious + ancient/legendary + elemental/cinematic</escape>
+**Atmosphere:** Balanced dark/mysterious + ancient/legendary + elemental/cinematic
 
 ## The visual promise
 
