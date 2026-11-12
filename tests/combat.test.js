@@ -167,3 +167,29 @@ test("boss hit applies a short stun that blocks immediate counter-actions", t =>
   combat.perform("attack");
   assert.equal(combat.pendingAttack, null, "stun must prevent an immediate counterattack");
 });
+
+
+test("Atrox phase two alternates into a larger, heavier abyss slam", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  arena.rivalHealth = 40;
+  let marker = null;
+  arena.setBossTelegraph = (active, radius) => { marker = { active, radius }; };
+  arena.triggerRivalStrike = () => {};
+  const combat = new CombatSystem(arena);
+  combat.bossAttackAt = 0;
+  combat.bossAttackCount = 1;
+  combat.update(.016, 3);
+  assert.equal(combat.telegraphKind, "slam");
+  assert.deepEqual(marker, { active: true, radius: 5.35 });
+  combat.update(.85, 3.85);
+  assert.equal(arena.playerHealth, 76, "abyss slam should deal 24 damage when not dodged");
+  assert.deepEqual(marker, { active: false, radius: 5.35 });
+});
