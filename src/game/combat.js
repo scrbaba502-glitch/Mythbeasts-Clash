@@ -90,6 +90,7 @@ export class CombatSystem {
     }
     if (this.telegraphAt && now >= this.telegraphAt) {
       this.telegraphAt = 0;
+      this.arena.triggerRivalStrike();
       const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
       if (distance < 4.4 && now > this.invulnerableUntil) {
         this.arena.playerHealth = Math.max(0, this.arena.playerHealth - (this.arena.rivalHealth <= 50 ? 18 : 12));
