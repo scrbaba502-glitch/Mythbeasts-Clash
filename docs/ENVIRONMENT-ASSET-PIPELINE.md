@@ -93,3 +93,37 @@ An environment is not production-ready until:
 - Android frame pacing, memory and lifecycle are tested.
 
 No empty flat floor, debug grid, sparse low-poly set dressing or simple circular ring can pass as final presentation.
+
+
+## 8. Runtime manifest and GLB contract
+
+The canonical runtime manifest is `public/assets/environments/manifest.json`. It defines:
+- Stable environment identity and schema version.
+- Metric coordinate contract (`+Y` up, `+Z` forward).
+- Rectangular gameplay dimensions consumed by player and boss movement bounds.
+- Stable asset IDs, GLB paths, category, collision intent, required flag and LOD declarations.
+- Honest delivery status for every production asset.
+
+The runtime validates this manifest before creating the arena. Invalid schema, coordinate conventions, bounds, duplicate IDs/paths, malformed asset paths, missing required landmarks or invalid collision/LOD declarations stop startup with a visible error rather than silently creating an incorrectly scaled world.
+
+### Asset delivery states
+
+- `production-asset-pending`: expected asset is not delivered; runtime keeps the procedural blockout and does not request the missing GLB.
+- `production-asset-ready`: runtime attempts to load the declared GLB and attaches it to the scene.
+- A failed GLB load is recorded and reported; the procedural blockout remains available as the fallback.
+
+Never mark an asset ready until its file exists at the declared path and passes visual, collision, LOD and Android performance review. The current Ruined Sanctuary remains `procedural-blockout`; all listed production GLBs are pending.
+
+### GLB scene requirements
+
+- GLB scene root uses the manifest coordinate contract and metric scale.
+- Apply transforms and document pivots before export.
+- Separate render geometry from collision proxies.
+- Use metallic-roughness PBR materials and shared atlases where practical.
+- Provide declared LOD levels with silhouette-preserving transitions.
+- Avoid missing external texture references; deliver self-contained GLB files.
+- Name the scene root after the stable manifest asset ID for runtime diagnostics.
+
+### Runtime integration and validation
+
+The manifest validator and GLB loader are covered by automated tests. Tests verify pending assets do not trigger network loads, ready assets attach to the scene, and failed asset loads are surfaced without preventing remaining assets from loading. The Android build must still be validated after every integration change; desktop browser success alone is not sufficient.
