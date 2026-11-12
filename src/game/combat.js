@@ -84,10 +84,16 @@ export class CombatSystem {
     }
     this.arena.rival.glowMat.emissiveIntensity += (1.7 - this.arena.rival.glowMat.emissiveIntensity) * Math.min(1, dt * 8);
     if (now >= this.bossAttackAt) {
-      this.bossAttackAt = now + (this.arena.rivalHealth <= 50 ? 1.9 : 2.6);
-      this.telegraphAt = now + .62;
-      this.arena.triggerRivalAttack();
-      this.announce("ATROX WINDS UP — DODGE");
+      const bossDistance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
+      if (bossDistance <= 6.2) {
+        this.bossAttackAt = now + (this.arena.rivalHealth <= 50 ? 1.9 : 2.6);
+        this.telegraphAt = now + .62;
+        this.arena.triggerRivalAttack();
+        this.announce("ATROX WINDS UP — DODGE");
+      } else {
+        // Do not waste a full attack cycle while the champion is outside the encounter range.
+        this.bossAttackAt = now + .35;
+      }
     }
     if (this.telegraphAt && now >= this.telegraphAt) {
       this.telegraphAt = 0;
