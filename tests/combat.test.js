@@ -87,3 +87,23 @@ test("melee strike must face the rival to confirm a hit", t => {
   assert.equal(arena.rivalHealth, 100, "a melee strike from the wrong direction must not hit");
   assert.match(elements.get("#battle-message").textContent, /WRONG DIRECTION/);
 });
+
+
+test("boss waits for engagement range before starting a telegraphed attack", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  arena.player.root.position.distanceTo = () => 10;
+  let windups = 0;
+  arena.triggerRivalAttack = () => { windups++; };
+  const combat = new CombatSystem(arena);
+  combat.update(.016, 3);
+  assert.equal(windups, 0, "boss should not telegraph from outside engagement range");
+  assert.equal(combat.bossAttackAt, 3.35);
+});
