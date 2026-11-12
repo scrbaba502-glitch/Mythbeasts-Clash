@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "units": "meters",
+  "forwardAxis": "+Z",
+  "upAxis": "+Y",
+  "rootAtGround": true,
+  "scale": 1,
+  "characters": {
+    "vyrak": {
+      "model": "/assets/characters/vyrak/vyrak.glb",
+      "requiredClips": ["Idle", "Locomotion", "Attack", "Dodge", "Hit", "Skill", "Victory", "Defeat"],
+      "optionalClips": ["Stagger"]
+    },
+    "atrox": {
+      "model": "/assets/characters/atrox/atrox-nefas.glb",
+      "requiredClips": ["Idle", "Locomotion", "BossWindup", "Attack", "Hit", "Stagger", "Victory", "Defeat"],
+      "optionalClips": ["Skill"]
+    }
+  },
+  "exportRequirements": {
+    "format": "glTF 2.0 binary (.glb)",
+    "skeleton": "single deform skeleton per character",
+    "animation": "separate named clips, in-place locomotion",
+    "materials": "PBR metallic-roughness, mobile texture budgets",
+    "textures": "2K maximum per champion initially",
+    "polygonBudget": "target 25k-45k triangles per champion before LOD",
+    "validation": ["no missing textures", "no bind-pose offsets", "feet contact ground", "all clips share one skeleton", "no root translation in in-place locomotion"]
+  }
+}
