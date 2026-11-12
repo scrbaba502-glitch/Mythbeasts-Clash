@@ -23,7 +23,9 @@ export class AnimationStateController {
     this.fadeSeconds = fadeSeconds;
     this.onStateChange = onStateChange;
     this.actions = new Map();
+    this.actionDurations = new Map();
     this.state = null;
+    this.stateElapsed = 0;
     this.moving = false;
     this.destroyed = false;
     this.finished = event => {
@@ -44,6 +46,7 @@ export class AnimationStateController {
       action.clampWhenFinished = ONE_SHOT.has(state);
       action.setLoop(ONE_SHOT.has(state) ? THREE.LoopOnce : THREE.LoopRepeat, ONE_SHOT.has(state) ? 1 : Infinity);
       this.actions.set(state, action);
+      this.actionDurations.set(state, clip.duration);
     }
     this.currentAction = null;
     this.play("idle");
@@ -61,6 +64,7 @@ export class AnimationStateController {
     else next.fadeIn(Math.max(0, fadeSeconds));
     this.currentAction = next;
     this.state = state;
+    this.stateElapsed = 0;
     this.onStateChange?.(state);
     return true;
   }
@@ -74,7 +78,15 @@ export class AnimationStateController {
   }
 
   update(dt) {
-    if (!this.destroyed) this.mixer.update(Math.max(0, Math.min(dt, .05)));
+    if (this.destroyed) return;
+    const delta = Math.max(0, Math.min(dt, .05));
+    this.mixer.update(delta);
+    if (ONE_SHOT.has(this.state)) {
+      this.stateElapsed += delta;
+      if (this.stateElapsed >= (this.actionDurations.get(this.state) || Infinity)) {
+        this.play(this.moving ? "locomotion" : "idle");
+      }
+    }
   }
 
   destroy() {
@@ -84,6 +96,7 @@ export class AnimationStateController {
     this.mixer.stopAllAction();
     this.mixer.uncacheRoot(this.model);
     this.actions.clear();
+    this.actionDurations.clear();
     this.currentAction = null;
   }
 }
