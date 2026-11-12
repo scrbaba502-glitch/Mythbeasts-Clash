@@ -6,7 +6,6 @@ export class TouchControls {
     this.onMove = onMove;
     this.onAction = onAction;
     this.padPointer = null;
-    this.cooldownTimers = new Map();
     this.handlePadDown = (e) => {
       if (this.padPointer !== null) return;
       e.preventDefault();
@@ -51,7 +50,11 @@ export class TouchControls {
     const x = rawX * scale;
     const y = rawY * scale;
     this.knob.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-    this.onMove(x / limit, y / limit);
+    const magnitude = Math.min(1, length / limit);
+    const deadZone = .12;
+    const response = magnitude <= deadZone ? 0 : (magnitude - deadZone) / (1 - deadZone);
+    const inputScale = magnitude > 0 ? response / magnitude : 0;
+    this.onMove((x / limit) * inputScale, (y / limit) * inputScale);
   }
 
   resetPad() {

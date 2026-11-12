@@ -70,3 +70,19 @@ test("destroy removes pointer listeners", () => {
   assert.equal((pad.listeners.get("pointerdown") || []).length, 0);
   assert.equal((actions.listeners.get("pointerdown") || []).length, 0);
 });
+
+
+test("movement pad filters thumb drift with a small radial dead zone", () => {
+  const pad = new FakeElement();
+  const knob = new FakeElement();
+  const actions = new FakeElement();
+  const moves = [];
+  const controls = new TouchControls({ pad, knob, actions, onMove: (x,y) => moves.push([x,y]), onAction() {} });
+  pad.dispatch("pointerdown", pointer({ clientX: 52, clientY: 50 }));
+  assert.deepEqual(moves.at(-1), [0, 0], "tiny resting-thumb movement should not drift the champion");
+  pad.dispatch("pointermove", pointer({ clientX: 64, clientY: 50 }));
+  const expected = ((14 / 29) - .12) / .88;
+  assert.ok(Math.abs(moves.at(-1)[0] - expected) < 1e-8, "analog response should ramp smoothly outside the dead zone");
+  assert.equal(moves.at(-1)[1], 0);
+  controls.destroy();
+});
