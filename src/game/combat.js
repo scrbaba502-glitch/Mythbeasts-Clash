@@ -16,6 +16,8 @@ export class CombatSystem {
     this.playerStunnedUntil = 0;
     this.bossAttackAt = 2.6;
     this.telegraphAt = 0;
+    this.telegraphKind = "strike";
+    this.bossAttackCount = 0;
     this.perform = this.perform.bind(this);
   }
 
@@ -95,10 +97,18 @@ export class CombatSystem {
     if (now >= this.bossAttackAt) {
       const bossDistance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
       if (bossDistance <= 6.2) {
-        this.bossAttackAt = now + (this.arena.rivalHealth <= 50 ? 1.9 : 2.6);
-        this.telegraphAt = now + .62;
+        const phaseTwo = this.arena.rivalHealth <= 50;
+        this.bossAttackAt = now + (phaseTwo ? 1.9 : 2.6);
+        this.bossAttackCount++;
+        this.telegraphKind = phaseTwo && this.bossAttackCount % 2 === 0 ? "slam" : "strike";
+        const windup = this.telegraphKind === "slam" ? .84 : .62;
+        const radius = this.telegraphKind === "slam" ? 5.35 : 4.4;
+        this.telegraphAt = now + windup;
+        this.arena.setBossTelegraph?.(true, radius);
         this.arena.triggerRivalAttack();
-        this.announce("ATROX WINDS UP — DODGE");
+        this.announce(this.telegraphKind === "slam"
+          ? "ABYSS SLAM — ESCAPE THE MARK"
+          : "ATROX WINDS UP — DODGE");
       } else {
         // Do not waste a full attack cycle while the champion is outside the encounter range.
         this.bossAttackAt = now + .35;
@@ -106,16 +116,19 @@ export class CombatSystem {
     }
     if (this.telegraphAt && now >= this.telegraphAt) {
       this.telegraphAt = 0;
+      this.arena.setBossTelegraph?.(false);
       this.arena.triggerRivalStrike();
       const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
-      if (distance < 4.4 && now > this.invulnerableUntil) {
-        this.arena.playerHealth = Math.max(0, this.arena.playerHealth - (this.arena.rivalHealth <= 50 ? 18 : 12));
+      const attackRadius = this.telegraphKind === "slam" ? 5.35 : 4.4;
+      const damage = this.telegraphKind === "slam" ? 24 : (this.arena.rivalHealth <= 50 ? 18 : 12);
+      if (distance < attackRadius && now > this.invulnerableUntil) {
+        this.arena.playerHealth = Math.max(0, this.arena.playerHealth - damage);
         this.arena.triggerPlayerHit();
         this.playerStunnedUntil = now + .38;
         this.playerBar.style.width = this.arena.playerHealth + "%";
         this.announce("ATROX CONNECTS — FIND YOUR OPENING");
         if (this.arena.playerHealth === 0) this.finish(false);
-      } else if (distance < 4.4) this.announce("PERFECT DODGE");
+      } else if (distance < attackRadius) this.announce("PERFECT DODGE");
     }
   }
 
