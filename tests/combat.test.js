@@ -13,6 +13,8 @@ function makeArena() {
     triggerAttack() {},
     triggerDodge() {},
     triggerRivalHit() {},
+    triggerRivalAttack() {},
+    triggerRivalStrike() {},
     triggerPlayerHit() {},
     setMoveInput() {}
   };
@@ -189,7 +191,7 @@ test("Atrox phase two alternates into a larger, heavier abyss slam", t => {
   combat.update(.016, 3);
   assert.equal(combat.telegraphKind, "slam");
   assert.deepEqual(marker, { active: true, radius: 5.35 });
-  combat.update(.85, 3.85);
+  combat.update(.87, 3.886);
   assert.equal(arena.playerHealth, 76, "abyss slam should deal 24 damage when not dodged");
   assert.deepEqual(marker, { active: false, radius: 5.35 });
 });
