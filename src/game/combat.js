@@ -85,5 +85,8 @@ export class CombatSystem {
     this.ended = true;
     this.announce(won ? "THE FIRST SEAL IS BROKEN" : "THE TITAN PREVAILS");
     this.phase.textContent = won ? "VICTORY" : "DEFEAT";
+    document.querySelector("#result-title").textContent = won ? "VICTORY" : "DEFEAT";
+    document.querySelector("#result-copy").textContent = won ? "The first seal is broken. Atrox has been driven back." : "Atrox has overwhelmed the champion. Regroup and fight again.";
+    document.querySelector("#result-overlay").hidden = false;
   }
 }
