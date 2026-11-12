@@ -16,7 +16,8 @@
 - [x] Add attack anticipation / active / recovery timing and directional hit confirmation
 - [x] Add adaptive boss approach, spacing, orbit, and engagement-range telegraphs
 - [x] Add visible ground danger markers and phase-two Abyss Slam attack pattern
-- [x] Add player action commitment windows, hit stun, and late-asset teardown protection
+- [x] Add player action commitment windows, hit stun with movement suppression, and late-asset teardown protection
+- [x] Ensure dodge cancels unresolved attack/skill commitments
 - [x] Ensure encounter completion clears active boss telegraph indicators
 - [x] Preserve authored victory and defeat final poses after terminal animation clips
 - [x] Reorder CI so fast static checks run before Android SDK provisioning
