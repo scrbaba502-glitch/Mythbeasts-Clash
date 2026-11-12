@@ -4,6 +4,7 @@ import { TouchControls } from "./game/controls.js";
 import { CombatSystem } from "./game/combat.js";
 import { loadRiggedCharacter } from "./game/characters.js";
 import { loadEnvironmentManifest } from "./game/environment.js";
+import { loadEnvironmentAssets } from "./game/environment-assets.js";
 
 const errorPanel = document.querySelector("#startup-error");
 
@@ -26,6 +27,19 @@ async function boot() {
     // Validate the world contract before constructing the scene or enabling combat.
     const environment = await loadEnvironmentManifest();
     const arena = new Arena(document.querySelector("#world"), { gameplayBounds: environment });
+    const environmentAssets = await loadEnvironmentAssets(arena.scene, await (async () => {
+      const response = await fetch("/assets/environments/manifest.json");
+      if (!response.ok) throw new Error(`Environment manifest unavailable (${response.status})`);
+      return response.json();
+    })(), {
+      onAssetError: (asset, error) => console.warn(`Environment asset failed: ${asset.id}`, error)
+    });
+    if (environmentAssets.pending.length) {
+      console.info("Environment art pending; procedural sanctuary blockout remains active.", environmentAssets.pending);
+    }
+    if (environmentAssets.failed.length) {
+      console.warn("Some production environment assets could not be loaded.", environmentAssets.failed);
+    }
     const combat = new CombatSystem(arena);
 
     // The character manifest remains the single source of truth for model paths and required clips.
