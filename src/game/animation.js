@@ -3,7 +3,7 @@ import * as THREE from "three";
 const CLIP_ALIASES = {
   idle: ["idle", "breathing", "stand"],
   locomotion: ["run", "walk", "locomotion", "move"],
-  attack: ["attack", "lightattack", "strike"],
+  attack: ["attack", "lightattack", "strike"],\n  attack2: ["attack2", "combo2", "heavyattack"],\n  attack3: ["attack3", "combo3", "finisher"],
   dodge: ["dodge", "roll", "dash"],
   hit: ["hit", "hitreact", "damage"],
   stagger: ["stagger", "stun"],
@@ -13,7 +13,7 @@ const CLIP_ALIASES = {
   bossWindup: ["windup", "telegraph", "charge"]
 };
 
-const ONE_SHOT = new Set(["attack", "dodge", "hit", "stagger", "skill", "victory", "defeat", "bossWindup"]);
+const ONE_SHOT = new Set(["attack", "attack2", "attack3", "dodge", "hit", "stagger", "skill", "victory", "defeat", "bossWindup"]);
 const normalize = value => String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
 export class AnimationStateController {

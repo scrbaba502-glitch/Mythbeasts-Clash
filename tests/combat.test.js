@@ -243,3 +243,47 @@ test("dodge cancels an unresolved attack and skill commitment", t => {
   assert.equal(combat.pendingSkill, null);
   assert.equal(dodgeCount, 1);
 });
+
+
+test("Vyrak can chain a three-stage combo with escalating damage", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  const stages = [];
+  arena.triggerAttack = (stage, duration) => stages.push({ stage, duration });
+  const combat = new CombatSystem(arena);
+
+  combat.perform("attack");
+  combat.update(.13, .13);
+  assert.equal(arena.rivalHealth, 91);
+  arena.time = .49;
+  combat.perform("attack");
+  combat.update(.15, .64);
+  assert.equal(arena.rivalHealth, 79);
+  arena.time = 1.02;
+  combat.perform("attack");
+  combat.update(.18, 1.2);
+  assert.equal(arena.rivalHealth, 63);
+  assert.deepEqual(stages.map(item => item.stage), [1, 2, 3]);
+  assert.deepEqual(stages.map(item => item.duration), [.36, .4, .5]);
+});
+
+test("combo chain resets after its follow-up window expires", t => {
+  const oldDocument = globalThis.document;
+  globalThis.document = { querySelector: () => makeElement() };
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+  const arena = makeArena();
+  const stages = [];
+  arena.triggerAttack = stage => stages.push(stage);
+  const combat = new CombatSystem(arena);
+  combat.perform("attack");
+  arena.time = 1.2;
+  combat.perform("attack");
+  assert.deepEqual(stages, [1, 1]);
+});

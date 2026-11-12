@@ -222,7 +222,12 @@ export class Arena {
     else this.dodgeVector.copy(this.player.root.position).sub(this.rival.root.position).setY(0).normalize();
     this.dodgeUntil = this.time + .24;
   }
-  triggerAttack() { this.attackUntil = this.time + .36; this.player.animator?.play("attack"); }
+  triggerAttack(comboStage = 1, duration = .36) {
+    this.attackDuration = duration;
+    this.attackComboStage = comboStage;
+    this.attackUntil = this.time + duration;
+    this.player.animator?.play(`attack${comboStage}`) || this.player.animator?.play("attack");
+  }
   triggerRivalAttack(duration = .62) {
     this.rivalAttackDuration = duration;
     this.rivalAttackUntil = this.time + duration;

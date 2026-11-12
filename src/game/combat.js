@@ -18,6 +18,8 @@ export class CombatSystem {
     this.telegraphAt = 0;
     this.telegraphKind = "strike";
     this.bossAttackCount = 0;
+    this.comboStage = 0;
+    this.comboExpiresAt = 0;
     this.perform = this.perform.bind(this);
   }
 
@@ -34,11 +36,19 @@ export class CombatSystem {
     if (now < this.cooldowns[action] || now < this.playerStunnedUntil ||
         (action !== "dodge" && now < this.actionLockUntil)) return;
     if (action === "attack") {
-      this.cooldowns.attack = now + .58;
-      this.arena.triggerAttack();
-      this.pendingAttack = { activeAt: now + .13, recoverAt: now + .36, resolved: false };
-      this.actionLockUntil = now + .36;
-      this.announce("VYRAK COMMITS — FOLLOW THROUGH");
+      if (now > this.comboExpiresAt) this.comboStage = 0;
+      this.comboStage = (this.comboStage % 3) + 1;
+      const chain = [
+        { cooldown: .48, active: .13, recover: .36, duration: .36, damage: 9 },
+        { cooldown: .52, active: .15, recover: .4, duration: .4, damage: 12 },
+        { cooldown: .68, active: .18, recover: .5, duration: .5, damage: 16 }
+      ][this.comboStage - 1];
+      this.cooldowns.attack = now + chain.cooldown;
+      this.comboExpiresAt = now + 1.15;
+      this.arena.triggerAttack(this.comboStage, chain.duration);
+      this.pendingAttack = { activeAt: now + chain.active, recoverAt: now + chain.recover, damage: chain.damage, resolved: false };
+      this.actionLockUntil = now + chain.recover;
+      this.announce(`EMBER COMBO ${this.comboStage}/3 — FOLLOW THROUGH`);
     }
     if (action === "dodge") {
       this.cooldowns.dodge = now + .92;
@@ -84,7 +94,7 @@ export class CombatSystem {
       this.pendingAttack.resolved = true;
       const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
       const facing = this.arena.isPlayerFacingRival ? this.arena.isPlayerFacingRival(.35) : true;
-      if (distance < 3.7 && facing) this.damageRival(9);
+      if (distance < 3.7 && facing) this.damageRival(this.pendingAttack.damage || 9);
       else this.announce(distance >= 3.7 ? "OUT OF REACH — CLOSE THE DISTANCE" : "WRONG DIRECTION — TURN TOWARD ATROX");
     }
     if (this.pendingAttack && now >= this.pendingAttack.recoverAt) this.pendingAttack = null;
