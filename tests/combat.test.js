@@ -11,7 +11,10 @@ function makeArena() {
     player: { root: { position: { distanceTo: () => 2 } } },
     rival: { root: { position: {} }, glowMat: { emissiveIntensity: 1.7 } },
     triggerAttack() {},
-    triggerDodge() {}
+    triggerDodge() {},
+    triggerRivalHit() {},
+    triggerPlayerHit() {},
+    setMoveInput() {}
   };
 }
 
@@ -45,5 +48,23 @@ test("dodge creates a short invulnerability window and invokes movement", t => {
   const combat = new CombatSystem(arena);
   combat.perform("dodge");
   assert.equal(dodges, 1);
-  assert.equal(combat.invulnerableUntil, .48);
+  assert.equal(combat.invulnerableUntil, .66, "dodge should cover the full boss telegraph impact window");
+});
+
+test("boss hit reaction is triggered when player damage lands", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  let hitReactions = 0;
+  arena.triggerRivalHit = () => { hitReactions++; };
+  const combat = new CombatSystem(arena);
+  combat.damageRival(12);
+  assert.equal(arena.rivalHealth, 88);
+  assert.equal(hitReactions, 1);
 });
