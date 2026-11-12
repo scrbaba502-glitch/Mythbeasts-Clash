@@ -36,7 +36,7 @@ export class CombatSystem {
     }
     if (action === "dodge") {
       this.cooldowns.dodge = now + .92;
-      this.invulnerableUntil = now + .48;
+      this.invulnerableUntil = now + .66;
       this.dodgeUntil = now + .25;
       this.arena.triggerDodge();
       this.announce("PHASE DODGE — REPOSITION");
@@ -52,11 +52,15 @@ export class CombatSystem {
     this.arena.rivalHealth = Math.max(0, this.arena.rivalHealth - amount);
     this.rivalBar.style.width = this.arena.rivalHealth + "%";
     this.arena.rival.glowMat.emissiveIntensity = 3.2;
+    this.arena.triggerRivalHit();
     this.announce("STRIKE CONFIRMED");
     if (this.arena.rivalHealth === 0) this.finish(true);
     else if (this.arena.rivalHealth <= 50) {
-      this.phase.textContent = "ATROX · ABYSS UNBOUND";
-      this.announce("THE ABYSS AWAKENS — SECOND PHASE");
+      if (this.phase.textContent !== "ATROX · ABYSS UNBOUND") {
+        this.phase.textContent = "ATROX · ABYSS UNBOUND";
+        this.bossAttackAt = Math.min(this.bossAttackAt, this.arena.time + .8);
+        this.announce("THE ABYSS AWAKENS — SECOND PHASE");
+      }
     }
   }
 
@@ -79,7 +83,8 @@ export class CombatSystem {
     this.arena.rival.glowMat.emissiveIntensity += (1.7 - this.arena.rival.glowMat.emissiveIntensity) * Math.min(1, dt * 8);
     if (now >= this.bossAttackAt) {
       this.bossAttackAt = now + (this.arena.rivalHealth <= 50 ? 1.9 : 2.6);
-      this.telegraphAt = now + .52;
+      this.telegraphAt = now + .62;
+      this.arena.triggerRivalAttack();
       this.announce("ATROX WINDS UP — DODGE");
     }
     if (this.telegraphAt && now >= this.telegraphAt) {
@@ -87,6 +92,7 @@ export class CombatSystem {
       const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
       if (distance < 4.4 && now > this.invulnerableUntil) {
         this.arena.playerHealth = Math.max(0, this.arena.playerHealth - (this.arena.rivalHealth <= 50 ? 18 : 12));
+        this.arena.triggerPlayerHit();
         this.playerBar.style.width = this.arena.playerHealth + "%";
         this.announce("ATROX CONNECTS — FIND YOUR OPENING");
         if (this.arena.playerHealth === 0) this.finish(false);
@@ -96,6 +102,8 @@ export class CombatSystem {
 
   finish(won) {
     this.ended = true;
+    this.arena.combatActive = false;
+    this.arena.setMoveInput(0, 0);
     this.announce(won ? "THE FIRST SEAL IS BROKEN" : "THE TITAN PREVAILS");
     this.phase.textContent = won ? "VICTORY" : "DEFEAT";
     document.querySelector("#result-title").textContent = won ? "VICTORY" : "DEFEAT";
