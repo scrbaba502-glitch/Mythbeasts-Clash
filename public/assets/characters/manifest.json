@@ -7,11 +7,19 @@
   "scale": 1,
   "characters": {
     "vyrak": {
+      "displayName": "Vyrak — The Emberbound",
+      "role": "balanced close-range bruiser",
+      "assetStatus": "production-asset-pending",
+      "visualIdentity": ["draconic beastborn anatomy", "basalt scales", "muscular counterbalancing tail", "volcanic cleaver", "subsurface ember fissures"],
       "model": "/assets/characters/vyrak/vyrak.glb",
-      "requiredClips": ["Idle", "Locomotion", "Attack", "Dodge", "Hit", "Skill", "Victory", "Defeat"],
+      "requiredClips": ["Idle", "Locomotion", "Attack", "Attack2", "Attack3", "Dodge", "Hit", "Skill", "Victory", "Defeat"],
       "optionalClips": ["Stagger"]
     },
     "atrox": {
+      "displayName": "Atrox Nefas — The Hollow Sovereign",
+      "role": "primordial story antagonist",
+      "assetStatus": "production-asset-pending",
+      "visualIdentity": ["asymmetrical primordial anatomy", "obsidian and bone plates", "broken crown silhouette", "restrained void fissures"],
       "model": "/assets/characters/atrox/atrox-nefas.glb",
       "requiredClips": ["Idle", "Locomotion", "BossWindup", "Attack", "Hit", "Stagger", "Victory", "Defeat"],
       "optionalClips": ["Skill"]
@@ -24,6 +32,7 @@
     "materials": "PBR metallic-roughness, mobile texture budgets",
     "textures": "2K maximum per champion initially",
     "polygonBudget": "target 25k-45k triangles per champion before LOD",
+    "coordinateContract": {"forwardAxis": "+Z", "upAxis": "+Y", "rootAtGround": true, "units": "meters"},
     "validation": ["no missing textures", "no bind-pose offsets", "feet contact ground", "all clips share one skeleton", "no root translation in in-place locomotion"]
   }
 }
