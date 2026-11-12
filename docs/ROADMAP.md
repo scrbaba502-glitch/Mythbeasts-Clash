@@ -18,6 +18,7 @@
 - [x] Add visible ground danger markers and phase-two Abyss Slam attack pattern
 - [x] Add player action commitment windows, hit stun, and late-asset teardown protection
 - [x] Ensure encounter completion clears active boss telegraph indicators
+- [x] Preserve authored victory and defeat final poses after terminal animation clips
 - [x] Reorder CI so fast static checks run before Android SDK provisioning
 - [x] Document Blender/glTF character asset, rig, animation, export, and acceptance pipeline
 - Refine thumb controls using device testing and multi-touch edge cases
