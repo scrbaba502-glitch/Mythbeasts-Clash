@@ -59,6 +59,7 @@ export class CombatSystem {
     else if (this.arena.rivalHealth <= 50) {
       if (this.phase.textContent !== "ATROX · ABYSS UNBOUND") {
         this.phase.textContent = "ATROX · ABYSS UNBOUND";
+        this.arena.rivalPhase = 2;
         this.bossAttackAt = Math.min(this.bossAttackAt, this.arena.time + .8);
         this.announce("THE ABYSS AWAKENS — SECOND PHASE");
       }
