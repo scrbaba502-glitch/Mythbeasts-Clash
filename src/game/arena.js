@@ -266,8 +266,9 @@ export class Arena {
       p.z = clamp(p.z + this.dodgeVector.z * dt * 8.2, -8.3, 8.3);
     }
     const attacking = this.time < this.attackUntil;
-    const attackProgress = attacking ? 1 - (this.attackUntil - this.time) / .36 : 0;
-    const swing = attacking ? -Math.sin(attackProgress * Math.PI) * 1.25 : 0;
+    const attackProgress = attacking ? 1 - (this.attackUntil - this.time) / (this.attackDuration || .36) : 0;
+    const swingPower = [0, 1.25, 1.55, 1.9][this.attackComboStage || 1];
+    const swing = attacking ? -Math.sin(attackProgress * Math.PI) * swingPower : 0;
     this.player.weapon.rotation.z += (swing - this.player.weapon.rotation.z) * Math.min(1, dt * 20);
     const speed = Math.hypot(this.playerVelocity.x, this.playerVelocity.z);
     const moving = speed > .2;
