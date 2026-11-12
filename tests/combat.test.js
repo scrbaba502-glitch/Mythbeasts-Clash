@@ -127,3 +127,43 @@ test("Atrox enters a faster second phase at half health", t => {
   assert.equal(arena.rivalPhase, 2);
   assert.equal(elements.get("#phase-label").textContent, "ATROX · ABYSS UNBOUND");
 });
+
+
+test("combat actions respect commitment windows and cannot overlap", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  const combat = new CombatSystem(arena);
+  combat.perform("attack");
+  combat.perform("skill");
+  assert.equal(combat.pendingSkill, null, "skill must not interrupt an attack commitment");
+  assert.equal(combat.cooldowns.skill, 0, "rejected action must not consume its cooldown");
+  assert.ok(combat.actionLockUntil > arena.time);
+});
+
+test("boss hit applies a short stun that blocks immediate counter-actions", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  arena.triggerRivalStrike = () => {};
+  const combat = new CombatSystem(arena);
+  combat.bossAttackAt = 0;
+  combat.update(.016, 3);
+  combat.update(.63, 3.63);
+  assert.equal(arena.playerHealth, 88);
+  assert.equal(combat.playerStunnedUntil, 4.01);
+  combat.perform("attack");
+  assert.equal(combat.pendingAttack, null, "stun must prevent an immediate counterattack");
+});
