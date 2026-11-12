@@ -12,7 +12,10 @@
 ## Milestone 1 — first vertical slice
 - Replace temporary geometric fighter proxies with original rigged champion assets
 - Integrate authored idle, locomotion, turn, attack, dodge, hit-react, stagger, and defeat animations
-- Add animation-state controller and attack anticipation / active / recovery frames
+- [x] Add crossfading skeletal animation-state controller and named clip mapping
+- [x] Add attack anticipation / active / recovery timing and directional hit confirmation
+- [x] Add adaptive boss approach, spacing, orbit, and engagement-range telegraphs
+- [x] Document Blender/glTF character asset, rig, animation, export, and acceptance pipeline
 - Refine thumb controls using device testing and multi-touch edge cases
 - Improve battlefield art direction, collision, camera framing, and performance budgets
 - Implement complete first encounter with reliable restart and win/loss state
