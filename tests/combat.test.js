@@ -107,3 +107,23 @@ test("boss waits for engagement range before starting a telegraphed attack", t =
   assert.equal(windups, 0, "boss should not telegraph from outside engagement range");
   assert.equal(combat.bossAttackAt, 3.35);
 });
+
+
+test("Atrox enters a faster second phase at half health", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  arena.rivalHealth = 55;
+  arena.rivalPhase = 1;
+  const combat = new CombatSystem(arena);
+  combat.damageRival(10);
+  assert.equal(arena.rivalHealth, 45);
+  assert.equal(arena.rivalPhase, 2);
+  assert.equal(elements.get("#phase-label").textContent, "ATROX · ABYSS UNBOUND");
+});
