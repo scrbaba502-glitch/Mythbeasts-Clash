@@ -12,7 +12,7 @@ try {
   loadRiggedCharacter(arena.player, "/assets/characters/vyrak/vyrak.glb", { scale: 1 }).catch(error => {
     console.info("Vyrak rigged asset not installed yet; using prototype proxy.", error.message);
   });
-  loadRiggedCharacter(arena.rival, "/assets/characters/atrox/atrox-nefas.glb", { scale: 1.18 }).catch(error => {
+  loadRiggedCharacter(arena.rival, "/assets/characters/atrox/atrox-nefas.glb", { scale: 1 }).catch(error => {
     console.info("Atrox rigged asset not installed yet; using prototype proxy.", error.message);
   });
   document.querySelector("#restart-battle").addEventListener("click", () => window.location.reload());
