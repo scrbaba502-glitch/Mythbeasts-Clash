@@ -8,6 +8,14 @@ export async function loadRiggedCharacter(fighter, url, { scale = 1, rotationY =
   if (!gltf.scene) throw new Error(`Character asset has no scene: ${url}`);
 
   const model = gltf.scene;
+  if (fighter.disposed) {
+    model.traverse(node => {
+      if (!node.isMesh) return;
+      node.geometry?.dispose();
+      for (const material of Array.isArray(node.material) ? node.material : [node.material]) material?.dispose();
+    });
+    throw new Error(`Character load completed after arena disposal: ${url}`);
+  }
   model.scale.setScalar(scale);
   model.rotation.y = rotationY;
   model.position.set(0, 0, 0);
