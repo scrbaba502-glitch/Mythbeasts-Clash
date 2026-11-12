@@ -253,7 +253,7 @@ export class Arena {
       const distance = toward.length();
       if (distance > .001) {
         toward.normalize();
-        const facingYaw = Math.atan2(-toward.x, -toward.z);
+        const facingYaw = Math.atan2(toward.x, toward.z);
         this.rival.root.rotation.y = facingYaw;
         if (distance > 4.1) {
           this.rival.root.position.addScaledVector(toward, dt * (distance > 6.5 ? 1.45 : .92));
