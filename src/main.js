@@ -16,7 +16,10 @@ try {
     onAction: (action) => combat.perform(action)
   });
   arena.onFrame((dt, time) => combat.update(dt, time));
-  arena.start();
+  document.querySelector("#start-battle").addEventListener("click", () => {
+    document.querySelector("#title-screen").classList.add("dismissed");
+    arena.start();
+  }, { once: true });
   window.addEventListener("pagehide", () => {
     controls.destroy();
     arena.destroy();
