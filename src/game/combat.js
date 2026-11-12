@@ -134,6 +134,8 @@ export class CombatSystem {
 
   finish(won) {
     this.ended = true;
+    this.telegraphAt = 0;
+    this.arena.setBossTelegraph?.(false);
     if (won) {
       this.arena.player.animator?.play("victory");
       this.arena.rival.animator?.play("defeat");
