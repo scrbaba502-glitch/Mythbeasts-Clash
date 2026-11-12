@@ -12,7 +12,7 @@ const CLIP_ALIASES = {
   skill: ["skill", "special", "ability"],
   victory: ["victory", "win"],
   defeat: ["defeat", "death", "lose"],
-  bossWindup: ["windup", "telegraph", "charge"]
+  bossWindup: ["bosswindup", "windup", "telegraph", "charge"]
 };
 
 const ONE_SHOT = new Set(["attack", "attack2", "attack3", "dodge", "hit", "stagger", "skill", "victory", "defeat", "bossWindup"]);
