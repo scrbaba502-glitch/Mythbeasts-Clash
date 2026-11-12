@@ -186,6 +186,15 @@ export class Arena {
   }
 
   setMoveInput(x, y) { this.move.x = x; this.move.y = y; }
+  isPlayerFacingRival(minDot = .35) {
+    const toward = this.rival.root.position.clone().sub(this.player.root.position).setY(0);
+    if (toward.lengthSq() < .0001) return true;
+    toward.normalize();
+    const forward = new THREE.Vector3(
+      Math.sin(this.player.root.rotation.y), 0, Math.cos(this.player.root.rotation.y)
+    );
+    return forward.dot(toward) >= minDot;
+  }
   triggerDodge() {
     this.player.animator?.play("dodge");
     const sx = this.move.x, sy = this.move.y;
@@ -228,12 +237,16 @@ export class Arena {
     this.player.weapon.rotation.z += (swing - this.player.weapon.rotation.z) * Math.min(1, dt * 20);
     const speed = Math.hypot(this.playerVelocity.x, this.playerVelocity.z);
     const moving = speed > .2;
+    const dist = p.distanceTo(this.rival.root.position);
     this.player.animator?.setLocomotion(moving);
     this.player.animator?.update(dt);
     this.rival.animator?.setLocomotion(dist > 3.1);
     this.rival.animator?.update(dt);
     if (moving) this.player.root.rotation.y = Math.atan2(this.playerVelocity.x, this.playerVelocity.z);
-    const dist = p.distanceTo(this.rival.root.position);
+    else if (this.combatActive !== false && this.time >= this.attackUntil) {
+      const toward = this.rival.root.position.clone().sub(p).setY(0);
+      if (toward.lengthSq() > .01) this.player.root.rotation.y = Math.atan2(toward.x, toward.z);
+    }
     if (dist > 2.6 && this.time >= this.rivalAttackUntil) {
       const toward = p.clone().sub(this.rival.root.position).setY(0).normalize();
       this.rival.root.position.addScaledVector(toward, dt * (dist > 5 ? 1.15 : .42));
