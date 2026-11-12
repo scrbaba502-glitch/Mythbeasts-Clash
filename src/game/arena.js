@@ -389,6 +389,8 @@ export class Arena {
         }
       }
     }
+    this.rival.root.position.x = clamp(this.rival.root.position.x, -this.gameplayBounds.halfWidth, this.gameplayBounds.halfWidth);
+    this.rival.root.position.z = clamp(this.rival.root.position.z, -this.gameplayBounds.halfDepth, this.gameplayBounds.halfDepth);
     this.rival.animator?.setLocomotion(rivalMoving);
     this.rival.animator?.update(dt);
     const rivalWindup = this.time < this.rivalAttackUntil;
