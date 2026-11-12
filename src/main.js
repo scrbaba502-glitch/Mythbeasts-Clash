@@ -5,16 +5,33 @@ import { CombatSystem } from "./game/combat.js";
 import { loadRiggedCharacter } from "./game/characters.js";
 
 const errorPanel = document.querySelector("#startup-error");
+
+async function loadChampionFromManifest(fighter, championId) {
+  const response = await fetch("/assets/characters/manifest.json");
+  if (!response.ok) throw new Error(`Character manifest unavailable (${response.status})`);
+  const manifest = await response.json();
+  const entry = manifest.characters?.[championId];
+  if (!entry?.model || !Array.isArray(entry.requiredClips)) {
+    throw new Error(`Character manifest entry is incomplete: ${championId}`);
+  }
+  return loadRiggedCharacter(fighter, entry.model, {
+    scale: manifest.scale ?? 1,
+    requiredClips: entry.requiredClips
+  });
+}
+
 try {
   const arena = new Arena(document.querySelector("#world"));
   const combat = new CombatSystem(arena);
-  // Load authored GLB assets when present; retain the clearly marked greybox fallback otherwise.
-  loadRiggedCharacter(arena.player, "/assets/characters/vyrak/vyrak.glb", { scale: 1 }).catch(error => {
-    console.info("Vyrak rigged asset not installed yet; using prototype proxy.", error.message);
+
+  // The manifest is the single source of truth for model paths and required animation clips.
+  loadChampionFromManifest(arena.player, "vyrak").catch(error => {
+    console.info("Vyrak production asset not installed or incomplete; using prototype proxy.", error.message);
   });
-  loadRiggedCharacter(arena.rival, "/assets/characters/atrox/atrox-nefas.glb", { scale: 1 }).catch(error => {
-    console.info("Atrox rigged asset not installed yet; using prototype proxy.", error.message);
+  loadChampionFromManifest(arena.rival, "atrox").catch(error => {
+    console.info("Atrox production asset not installed or incomplete; using prototype proxy.", error.message);
   });
+
   document.querySelector("#restart-battle").addEventListener("click", () => window.location.reload());
   const controls = new TouchControls({
     pad: document.querySelector("#move-pad"),
