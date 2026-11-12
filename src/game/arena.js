@@ -75,7 +75,7 @@ function makeFighter({ color, glow, scale = 1, x = 0, z = 0, boss = false }) {
       root.add(horn);
     }
   }
-  return { root, limbs, weapon, body, bodyMat, glowMat, scale };
+  return { root, limbs, weapon, body, bodyMat, glowMat, scale, animator: null, assetLoaded: false };
 }
 
 export class Arena {
@@ -187,16 +187,17 @@ export class Arena {
 
   setMoveInput(x, y) { this.move.x = x; this.move.y = y; }
   triggerDodge() {
+    this.player.animator?.play("dodge");
     const sx = this.move.x, sy = this.move.y;
     const dx = sx * .72 + sy * .69, dz = sx * -.69 + sy * .72;
     if (Math.hypot(dx, dz) > .12) this.dodgeVector.set(dx, 0, dz).normalize();
     else this.dodgeVector.copy(this.player.root.position).sub(this.rival.root.position).setY(0).normalize();
     this.dodgeUntil = this.time + .24;
   }
-  triggerAttack() { this.attackUntil = this.time + .36; }
-  triggerRivalAttack() { this.rivalAttackUntil = this.time + .56; }
-  triggerRivalHit() { this.rivalHitUntil = this.time + .22; }
-  triggerPlayerHit() { this.playerHitUntil = this.time + .2; }
+  triggerAttack() { this.attackUntil = this.time + .36; this.player.animator?.play("attack"); }
+  triggerRivalAttack() { this.rivalAttackUntil = this.time + .56; this.rival.animator?.play("bossWindup") || this.rival.animator?.play("attack"); }
+  triggerRivalHit() { this.rivalHitUntil = this.time + .22; this.rival.animator?.play("hit"); }
+  triggerPlayerHit() { this.playerHitUntil = this.time + .2; this.player.animator?.play("hit"); }
   onFrame(callback) { this.frames.push(callback); }
 
   update(dt) {
@@ -226,6 +227,10 @@ export class Arena {
     this.player.weapon.rotation.z += (swing - this.player.weapon.rotation.z) * Math.min(1, dt * 20);
     const speed = Math.hypot(this.playerVelocity.x, this.playerVelocity.z);
     const moving = speed > .2;
+    this.player.animator?.setLocomotion(moving);
+    this.player.animator?.update(dt);
+    this.rival.animator?.setLocomotion(dist > 3.1);
+    this.rival.animator?.update(dt);
     if (moving) this.player.root.rotation.y = Math.atan2(this.playerVelocity.x, this.playerVelocity.z);
     const dist = p.distanceTo(this.rival.root.position);
     if (dist > 2.6 && this.time >= this.rivalAttackUntil) {
