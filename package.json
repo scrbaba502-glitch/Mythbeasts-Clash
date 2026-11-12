@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "check": "node --check src/main.js && node --check src/game/arena.js && node --check src/game/controls.js && node --check src/game/combat.js"
+    "check": "node --check src/main.js && node --check src/game/arena.js && node --check src/game/controls.js && node --check src/game/combat.js && npm test",
+    "test": "node --test"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
