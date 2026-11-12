@@ -23,6 +23,7 @@
 - [x] Reorder CI so fast static checks run before Android SDK provisioning
 - [x] Document Blender/glTF character asset, rig, animation, export, and acceptance pipeline
 - Refine thumb controls using device testing and multi-touch edge cases
+- Replace the debug-grid presentation with a layered ancient sanctuary: flagstone floor, broken colonnade, guardian effigies, monumental arch, braziers, crystals, and fog-layered monolith skyline
 - Improve battlefield art direction, collision, camera framing, and performance budgets
 - Implement complete first encounter with reliable restart and win/loss state
 

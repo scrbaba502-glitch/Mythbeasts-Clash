@@ -118,9 +118,6 @@ export class Arena {
     floor.receiveShadow = true;
     floor.position.y = -.06;
     this.scene.add(floor);
-    const grid = new THREE.GridHelper(28, 28, 0x47577c, 0x303c59);
-    grid.position.y = -.045;
-    this.scene.add(grid);
     this.addRuins();
     this.bossTelegraph = new THREE.Mesh(
       new THREE.CircleGeometry(1, 48),
@@ -164,31 +161,119 @@ export class Arena {
   }
 
   addRuins() {
-    const stone = new THREE.MeshStandardMaterial({ color: 0x171f35, roughness: .82, metalness: .22 });
-    const gold = new THREE.MeshStandardMaterial({ color: 0x8c7046, metalness: .7, roughness: .4 });
-    // Broken temple fragments frame a rectangular battlefield; no arena ring.
-    const fragments = [
-      [-11, 1.1, -8, .8, 2.2, .8], [10.8, 1.4, -8.5, .9, 2.8, .9],
-      [-10.5, .8, 8.3, .9, 1.6, .9], [11, 1.8, 8, .8, 3.6, .8],
-      [-7.5, .5, -9.7, 2.4, 1, .7], [7.8, .65, 9.6, 2.8, 1.3, .8],
-      [0, .45, -10.2, 3.8, .9, .7], [-1.5, .55, 10.1, 3.1, 1.1, .8]
-    ];
-    for (const [x,y,z,w,h,d] of fragments) {
-      const block = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), stone);
-      block.position.set(x,y,z); block.rotation.y = (x + z) * .035;
-      block.castShadow = true; block.receiveShadow = true;
-      this.scene.add(block);
-      const cap = new THREE.Mesh(new THREE.BoxGeometry(w * .78, .12, d * 1.2), gold);
-      cap.position.set(x,y + h/2 + .06,z);
-      this.scene.add(cap);
+    // Ancient sanctuary set dressing frames a broad rectangular combat floor.
+    const stone = new THREE.MeshStandardMaterial({ color: 0x333b4c, roughness: .94, metalness: .08 });
+    const darkStone = new THREE.MeshStandardMaterial({ color: 0x171e30, roughness: .9, metalness: .12 });
+    const wornStone = new THREE.MeshStandardMaterial({ color: 0x596071, roughness: .88, metalness: .08 });
+    const gold = new THREE.MeshStandardMaterial({ color: 0x9d7744, metalness: .72, roughness: .32 });
+    const ember = new THREE.MeshStandardMaterial({ color: 0xff783e, emissive: 0xff3d12, emissiveIntensity: 2.1, roughness: .3 });
+    const cyan = new THREE.MeshStandardMaterial({ color: 0x4aa9d2, emissive: 0x146aab, emissiveIntensity: 1.4, roughness: .28 });
+    const addBox = (x,y,z,w,h,d,mat,rotation=0) => {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+      mesh.position.set(x,y,z); mesh.rotation.y=rotation;
+      mesh.castShadow=true; mesh.receiveShadow=true; this.scene.add(mesh); return mesh;
+    };
+    const addColumn = (x,z,height=4.8,broken=false) => {
+      addBox(x,.22,z,1.35,.44,1.35,darkStone);
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.43,.58,height,10,1),stone);
+      shaft.position.set(x,.44+height/2,z); shaft.castShadow=true; shaft.receiveShadow=true; this.scene.add(shaft);
+      addBox(x,.44+height+.12,z,1.3,.3,1.3,wornStone);
+      addBox(x,.44+height+.34,z,1.55,.16,1.55,gold);
+      if (broken) {
+        const rubble = new THREE.Mesh(new THREE.BoxGeometry(1.1,.55,.85),wornStone);
+        rubble.position.set(x+.65,.65,z+.35); rubble.rotation.set(.18,.5,.42);
+        rubble.castShadow=true; this.scene.add(rubble);
+      }
+    };
+
+    // Individual flagstones replace the debug grid with a worn, walkable surface.
+    const slabGeo = new THREE.BoxGeometry(1.92,.12,1.92);
+    const slabMats = [stone,wornStone,darkStone];
+    for(let x=-7;x<=7;x++) for(let z=-5;z<=5;z++) {
+      const mat = slabMats[(Math.abs(x*7+z*11)+((x*z)%3+3))%3];
+      const slab = new THREE.Mesh(slabGeo,mat);
+      slab.position.set(x*1.94,-.01,z*1.94);
+      slab.rotation.y = ((x*13+z*7)%5)*.006;
+      slab.receiveShadow=true; this.scene.add(slab);
     }
-    const sigil = new THREE.Mesh(
-      new THREE.CircleGeometry(2.1, 6),
-      new THREE.MeshBasicMaterial({ color: 0x566ca0, transparent: true, opacity: .12, side: THREE.DoubleSide })
-    );
-    sigil.rotation.x = -Math.PI / 2;
-    sigil.position.y = .006;
-    this.scene.add(sigil);
+    // Carved perimeter bands and broad entry stairs.
+    addBox(0,.08,-11.1,23,.34,.65,darkStone);
+    addBox(0,.28,-11.12,21,.12,.22,gold);
+    addBox(0,.08,11.1,23,.34,.65,darkStone);
+    addBox(0,.28,11.12,21,.12,.22,gold);
+    for(let i=0;i<4;i++) addBox(0,.12+i*.18,9.9+i*.32,8-i*.5,.22,.42,wornStone);
+
+    // Broken colonnade and toppled masonry create scale and depth.
+    addColumn(-10.8,-8.2,3.7,true); addColumn(10.8,-8.2,5.5,false);
+    addColumn(-10.8,8.1,5.2,false); addColumn(10.8,8.1,3.1,true);
+    addColumn(-7.5,-10.2,3.1,true); addColumn(7.5,-10.2,4.6,false);
+    addColumn(-7.5,10.1,4.2,false); addColumn(7.5,10.1,3.2,true);
+    for(const [x,z,r] of [[-9,-4,.4],[9,-5,.55],[-9,5,.5],[9,4,.4],[-5,-9,.65],[5,9,.55]]) {
+      const fallen = new THREE.Mesh(new THREE.BoxGeometry(2.8,.7,.9),wornStone);
+      fallen.position.set(x,.38,z); fallen.rotation.y=r; fallen.rotation.z=.16;
+      fallen.castShadow=true; fallen.receiveShadow=true; this.scene.add(fallen);
+      const fracture = new THREE.Mesh(new THREE.ConeGeometry(.55,.85,5),darkStone);
+      fracture.position.set(x+.8,.8,z-.15); fracture.rotation.z=.5; this.scene.add(fracture);
+    }
+
+    // Monumental broken arch silhouette at the far end.
+    for(const x of [-4.8,4.8]) {
+      addBox(x,2.7,-12.1,.9,5.4,.85,darkStone,.08*x);
+      addBox(x,5.5,-12.1,1.35,.35,1.15,gold);
+    }
+    addBox(0,5.15,-12.1,10.2,.75,.95,stone);
+    addBox(-1.6,6.05,-12.1,3.1,.3,.75,wornStone,-.12);
+    addBox(2.5,5.7,-12.1,2.6,.28,.75,wornStone,.17);
+
+    // Ancient guardian effigies on plinths; decorative silhouettes, not fighters.
+    for(const x of [-8.8,8.8]) {
+      addBox(x,.65,-6.6,1.8,1.3,1.8,darkStone);
+      const torso = new THREE.Mesh(new THREE.OctahedronGeometry(.9,1),wornStone);
+      torso.position.set(x,2.25,-6.6); torso.scale.set(.85,1.65,.55);
+      torso.castShadow=true; this.scene.add(torso);
+      const head = new THREE.Mesh(new THREE.IcosahedronGeometry(.48,1),gold);
+      head.position.set(x,3.85,-6.6); head.castShadow=true; this.scene.add(head);
+      for(const side of [-1,1]) {
+        const wing = new THREE.Mesh(new THREE.ConeGeometry(.32,1.9,5),darkStone);
+        wing.position.set(x+side*.8,2.55,-6.6); wing.rotation.z=side*.55;
+        wing.castShadow=true; this.scene.add(wing);
+      }
+    }
+
+    // Braziers and crystal pylons add warm/cool contrast around the play space.
+    for(const [x,z] of [[-9,-1],[9,-1],[-6,8],[6,8]]) {
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(.48,.72,.6,8),gold);
+      base.position.set(x,.3,z); base.castShadow=true; this.scene.add(base);
+      const bowl = new THREE.Mesh(new THREE.CylinderGeometry(.55,.38,.34,8),darkStone);
+      bowl.position.set(x,.72,z); this.scene.add(bowl);
+      const flame = new THREE.Mesh(new THREE.OctahedronGeometry(.32,1),ember);
+      flame.position.set(x,1.2,z); flame.scale.y=1.7; this.scene.add(flame);
+      const light = new THREE.PointLight(0xff713e,9,7,2);
+      light.position.set(x,1.5,z); this.scene.add(light);
+    }
+    for(const [x,z] of [[-11,0],[11,0]]) {
+      const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(.85,1),cyan);
+      crystal.position.set(x,1.6,z); crystal.scale.set(.55,2.3,.55);
+      crystal.rotation.z=.12; crystal.castShadow=true; this.scene.add(crystal);
+      const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(.65,.85,.65,6),darkStone);
+      pedestal.position.set(x,.32,z); this.scene.add(pedestal);
+    }
+
+    // Subtle inlaid primordial seal beneath the combatants.
+    const seal = new THREE.Mesh(new THREE.CircleGeometry(3.15,6),new THREE.MeshBasicMaterial({color:0x8c754f,transparent:true,opacity:.1,side:THREE.DoubleSide,depthWrite:false}));
+    seal.rotation.x=-Math.PI/2; seal.position.y=.064; this.scene.add(seal);
+    const sealRing = new THREE.Mesh(new THREE.RingGeometry(3.18,3.28,6),new THREE.MeshBasicMaterial({color:0xc19a5c,transparent:true,opacity:.45,side:THREE.DoubleSide,depthWrite:false}));
+    sealRing.rotation.x=-Math.PI/2; sealRing.position.y=.07; this.scene.add(sealRing);
+
+    // Distant monolith skyline fades into the atmospheric fog.
+    for(let i=0;i<9;i++) {
+      const x=-18+i*4.5, h=5+(i*7%5)*1.1;
+      const tower = new THREE.Mesh(new THREE.CylinderGeometry(.5,.9,h,5),darkStone);
+      tower.position.set(x,h/2-1,-19-(i%3)*2); tower.rotation.z=(i%2?-.08:.08);
+      this.scene.add(tower);
+      const crown = new THREE.Mesh(new THREE.ConeGeometry(1.05,1.5,5),stone);
+      crown.position.set(x,h-.15,-19-(i%3)*2); this.scene.add(crown);
+    }
   }
 
   onResize() {
