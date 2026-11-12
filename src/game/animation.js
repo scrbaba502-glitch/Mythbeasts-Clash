@@ -29,7 +29,8 @@ export class AnimationStateController {
     this.moving = false;
     this.destroyed = false;
     this.finished = event => {
-      if (event.action === this.currentAction && ONE_SHOT.has(this.state)) {
+      if (event.action === this.currentAction && ONE_SHOT.has(this.state) &&
+          this.state !== "victory" && this.state !== "defeat") {
         this.play(this.moving ? "locomotion" : "idle");
       }
     };
@@ -81,7 +82,7 @@ export class AnimationStateController {
     if (this.destroyed) return;
     const delta = Math.max(0, Math.min(dt, .05));
     this.mixer.update(delta);
-    if (ONE_SHOT.has(this.state)) {
+    if (ONE_SHOT.has(this.state) && this.state !== "victory" && this.state !== "defeat") {
       this.stateElapsed += delta;
       if (this.stateElapsed >= (this.actionDurations.get(this.state) || Infinity)) {
         this.play(this.moving ? "locomotion" : "idle");
