@@ -166,6 +166,7 @@ test("boss hit applies a short stun that blocks immediate counter-actions", t =>
   combat.update(.63, 3.63);
   assert.equal(arena.playerHealth, 88);
   assert.equal(combat.playerStunnedUntil, 4.01);
+  assert.equal(arena.playerControlLockedUntil, 4.01, "hit stun must also suppress movement");
   combat.perform("attack");
   assert.equal(combat.pendingAttack, null, "stun must prevent an immediate counterattack");
 });
@@ -214,4 +215,28 @@ test("ending an encounter clears any active boss danger marker", t => {
   combat.finish(true);
   assert.equal(combat.telegraphAt, 0);
   assert.equal(markerVisible, false);
+});
+
+
+test("dodge cancels an unresolved attack and skill commitment", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  let dodgeCount = 0;
+  arena.triggerDodge = () => { dodgeCount++; };
+  const combat = new CombatSystem(arena);
+  combat.perform("attack");
+  assert.ok(combat.pendingAttack);
+  combat.arena.time = .4;
+  combat.actionLockUntil = .4;
+  combat.perform("dodge");
+  assert.equal(combat.pendingAttack, null);
+  assert.equal(combat.pendingSkill, null);
+  assert.equal(dodgeCount, 1);
 });
