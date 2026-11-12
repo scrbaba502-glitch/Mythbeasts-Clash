@@ -349,6 +349,9 @@ export class Arena {
 
   destroy() {
     this.running = false;
+    this.player.disposed = true;
+    this.rival.disposed = true;
+    this.setBossTelegraph(false);
     cancelAnimationFrame(this.raf);
     window.removeEventListener("resize", this.resize);
     this.renderer.dispose();
