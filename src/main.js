@@ -7,6 +7,7 @@ const errorPanel = document.querySelector("#startup-error");
 try {
   const arena = new Arena(document.querySelector("#world"));
   const combat = new CombatSystem(arena);
+  document.querySelector("#restart-battle").addEventListener("click", () => window.location.reload());
   const controls = new TouchControls({
     pad: document.querySelector("#move-pad"),
     knob: document.querySelector("#move-knob"),
