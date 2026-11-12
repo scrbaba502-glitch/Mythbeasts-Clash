@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "environmentId": "ruined-sanctuary",
+  "displayName": "Ruined Sanctuary",
+  "assetStatus": "procedural-blockout",
+  "coordinateContract": {
+    "units": "meters",
+    "upAxis": "+Y",
+    "forwardAxis": "+Z"
+  },
+  "gameplayBounds": {
+    "width": 20.8,
+    "depth": 16.6,
+    "shape": "rectangular",
+    "centerClearanceRadius": 4.2
+  },
+  "assets": [
+    {
+      "id": "combat-floor",
+      "path": "/assets/environments/ruined-sanctuary/combat-floor.glb",
+      "category": "modular-ground",
+      "status": "production-asset-pending",
+      "collision": "walkable",
+      "required": true,
+      "lod": [
+        "LOD0",
+        "LOD1"
+      ]
+    },
+    {
+      "id": "flagstone-kit",
+      "path": "/assets/environments/ruined-sanctuary/flagstone-kit.glb",
+      "category": "modular-ground",
+      "status": "production-asset-pending",
+      "collision": "walkable",
+      "required": true,
+      "lod": [
+        "LOD0",
+        "LOD1"
+      ]
+    },
+    {
+      "id": "broken-arch-hero",
+      "path": "/assets/environments/ruined-sanctuary/broken-arch.glb",
+      "category": "hero-landmark",
+      "status": "production-asset-pending",
+      "collision": "none",
+      "required": true,
+      "lod": [
+        "LOD0",
+        "LOD1",
+        "LOD2"
+      ]
+    },
+    {
+      "id": "colonnade-kit",
+      "path": "/assets/environments/ruined-sanctuary/colonnade-kit.glb",
+      "category": "modular-architecture",
+      "status": "production-asset-pending",
+      "collision": "proxy",
+      "required": true,
+      "lod": [
+        "LOD0",
+        "LOD1",
+        "LOD2"
+      ]
+    },
+    {
+      "id": "guardian-effigies",
+      "path": "/assets/environments/ruined-sanctuary/guardian-effigies.glb",
+      "category": "hero-prop",
+      "status": "production-asset-pending",
+      "collision": "none",
+      "required": true,
+      "lod": [
+        "LOD0",
+        "LOD1"
+      ]
+    },
+    {
+      "id": "toppled-masonry",
+      "path": "/assets/environments/ruined-sanctuary/toppled-masonry.glb",
+      "category": "modular-prop",
+      "status": "production-asset-pending",
+      "collision": "proxy",
+      "required": true,
+      "lod": [
+        "LOD0",
+        "LOD1"
+      ]
+    },
+    {
+      "id": "braziers",
+      "path": "/assets/environments/ruined-sanctuary/braziers.glb",
+      "category": "modular-prop",
+      "status": "production-asset-pending",
+      "collision": "none",
+      "required": true,
+      "lod": [
+        "LOD0",
+        "LOD1"
+      ]
+    },
+    {
+      "id": "primordial-seal",
+      "path": "/assets/environments/ruined-sanctuary/primordial-seal.glb",
+      "category": "hero-prop",
+      "status": "production-asset-pending",
+      "collision": "none",
+      "required": true,
+      "lod": [
+        "LOD0",
+        "LOD1"
+      ]
+    },
+    {
+      "id": "crystal-pylons",
+      "path": "/assets/environments/ruined-sanctuary/crystal-pylons.glb",
+      "category": "modular-prop",
+      "status": "production-asset-pending",
+      "collision": "none",
+      "required": false,
+      "lod": [
+        "LOD0",
+        "LOD1"
+      ]
+    },
+    {
+      "id": "distant-monoliths",
+      "path": "/assets/environments/ruined-sanctuary/distant-monoliths.glb",
+      "category": "background",
+      "status": "production-asset-pending",
+      "collision": "none",
+      "required": true,
+      "lod": [
+        "LOD1",
+        "LOD2"
+      ]
+    }
+  ],
+  "delivery": {
+    "format": "GLB",
+    "pbr": "metallic-roughness",
+    "maxTextureResolution": 2048,
+    "sharedMaterialAtlases": true,
+    "collisionSeparateFromRenderMeshes": true
+  }
+}

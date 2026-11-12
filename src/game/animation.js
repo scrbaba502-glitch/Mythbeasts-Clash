@@ -72,7 +72,7 @@ export class AnimationStateController {
   }
   setLocomotion(moving) {
     this.moving = Boolean(moving);
-    if (["attack", "dodge", "hit", "stagger", "skill", "victory", "defeat", "bossWindup"].includes(this.state)) return;
+    if (["attack", "attack2", "attack3", "dodge", "hit", "stagger", "skill", "victory", "defeat", "bossWindup"].includes(this.state)) return;
     this.play(this.moving ? "locomotion" : "idle");
   }
   update(dt) {
