@@ -34,3 +34,18 @@ test("missing authored clips fail safely without throwing", () => {
   assert.equal(controller.has("attack"), false);
   controller.destroy();
 });
+
+
+test("victory and defeat clips hold their final pose instead of returning to idle", () => {
+  const model = new THREE.Group();
+  const controller = new AnimationStateController(model, [
+    clip("Idle"), clip("Victory"), clip("Defeat")
+  ]);
+  controller.play("victory");
+  for (let frame = 0; frame < 8; frame++) controller.update(.05);
+  assert.equal(controller.state, "victory");
+  controller.play("defeat");
+  for (let frame = 0; frame < 8; frame++) controller.update(.05);
+  assert.equal(controller.state, "defeat");
+  controller.destroy();
+});
