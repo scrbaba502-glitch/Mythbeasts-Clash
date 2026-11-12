@@ -62,7 +62,8 @@ export function validateEnvironmentManifest(manifest) {
     depth: bounds.depth,
     halfWidth: bounds.width / 2,
     halfDepth: bounds.depth / 2,
-    assetStatus: manifest.assetStatus
+    assetStatus: manifest.assetStatus,
+    assets: manifest.assets
   });
 }
 
