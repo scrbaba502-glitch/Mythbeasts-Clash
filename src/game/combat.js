@@ -71,8 +71,9 @@ export class CombatSystem {
     if (this.pendingAttack && !this.pendingAttack.resolved && now >= this.pendingAttack.activeAt) {
       this.pendingAttack.resolved = true;
       const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
-      if (distance < 3.7) this.damageRival(9);
-      else this.announce("OUT OF REACH — CLOSE THE DISTANCE");
+      const facing = this.arena.isPlayerFacingRival ? this.arena.isPlayerFacingRival(.35) : true;
+      if (distance < 3.7 && facing) this.damageRival(9);
+      else this.announce(distance >= 3.7 ? "OUT OF REACH — CLOSE THE DISTANCE" : "WRONG DIRECTION — TURN TOWARD ATROX");
     }
     if (this.pendingAttack && now >= this.pendingAttack.recoverAt) this.pendingAttack = null;
     if (this.pendingSkill && now >= this.pendingSkill.resolveAt) {
