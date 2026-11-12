@@ -1,6 +1,8 @@
 import * as THREE from "three";
 
 const clamp = THREE.MathUtils.clamp;
+const RIVAL_HIT_TINT = new THREE.Color(0x6a1530);
+const PLAYER_HIT_TINT = new THREE.Color(0x28516a);
 
 function makeFighter({ color, glow, scale = 1, x = 0, z = 0, boss = false }) {
   const root = new THREE.Group();
@@ -257,19 +259,19 @@ export class Arena {
     this.rival.limbs.arms[0].rotation.x += ((rivalWindup ? -.95 * Math.sin(rivalAttackProgress * Math.PI) : 0) - this.rival.limbs.arms[0].rotation.x) * Math.min(1, dt * 18);
     this.rival.root.rotation.z += ((this.time < this.rivalHitUntil ? .12 : 0) - this.rival.root.rotation.z) * Math.min(1, dt * 18);
     this.player.root.rotation.z += ((this.time < this.playerHitUntil ? -.1 : 0) - this.player.root.rotation.z) * Math.min(1, dt * 18);
-    const applyHitFlash = (fighter, active, tint, intensity) => {
+    const applyHitFlash = (fighter, active, tint, intensity, fallbackHex) => {
       if (fighter.assetMaterials?.length) {
         for (const entry of fighter.assetMaterials) {
-          entry.material.emissive.copy(active ? new THREE.Color(tint) : entry.baseEmissive);
+          entry.material.emissive.copy(active ? tint : entry.baseEmissive);
           entry.material.emissiveIntensity = active ? intensity : entry.baseIntensity;
         }
       } else {
-        fighter.bodyMat.emissive.setHex(active ? tint : 0x000000);
+        fighter.bodyMat.emissive.setHex(active ? fallbackHex : 0x000000);
         fighter.bodyMat.emissiveIntensity = active ? intensity : 0;
       }
     };
-    applyHitFlash(this.rival, this.time < this.rivalHitUntil, 0x6a1530, 1.2);
-    applyHitFlash(this.player, this.time < this.playerHitUntil, 0x28516a, .8);
+    applyHitFlash(this.rival, this.time < this.rivalHitUntil, RIVAL_HIT_TINT, 1.2, 0x6a1530);
+    applyHitFlash(this.player, this.time < this.playerHitUntil, PLAYER_HIT_TINT, .8, 0x28516a);
     this.player.root.position.y = Math.sin(this.time * (moving ? 11 : 2.3)) * (moving ? .035 : .018);
     this.rival.root.position.y = Math.sin(this.time * 1.8 + .8) * .035;
     this.player.limbs.legs.forEach((leg, i) => {
