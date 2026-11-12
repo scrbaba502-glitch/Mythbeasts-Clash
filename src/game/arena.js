@@ -257,10 +257,19 @@ export class Arena {
     this.rival.limbs.arms[0].rotation.x += ((rivalWindup ? -.95 * Math.sin(rivalAttackProgress * Math.PI) : 0) - this.rival.limbs.arms[0].rotation.x) * Math.min(1, dt * 18);
     this.rival.root.rotation.z += ((this.time < this.rivalHitUntil ? .12 : 0) - this.rival.root.rotation.z) * Math.min(1, dt * 18);
     this.player.root.rotation.z += ((this.time < this.playerHitUntil ? -.1 : 0) - this.player.root.rotation.z) * Math.min(1, dt * 18);
-    this.rival.bodyMat.emissive.setHex(this.time < this.rivalHitUntil ? 0x6a1530 : 0x000000);
-    this.rival.bodyMat.emissiveIntensity = this.time < this.rivalHitUntil ? 1.2 : 0;
-    this.player.bodyMat.emissive.setHex(this.time < this.playerHitUntil ? 0x28516a : 0x000000);
-    this.player.bodyMat.emissiveIntensity = this.time < this.playerHitUntil ? .8 : 0;
+    const applyHitFlash = (fighter, active, tint, intensity) => {
+      if (fighter.assetMaterials?.length) {
+        for (const entry of fighter.assetMaterials) {
+          entry.material.emissive.copy(active ? new THREE.Color(tint) : entry.baseEmissive);
+          entry.material.emissiveIntensity = active ? intensity : entry.baseIntensity;
+        }
+      } else {
+        fighter.bodyMat.emissive.setHex(active ? tint : 0x000000);
+        fighter.bodyMat.emissiveIntensity = active ? intensity : 0;
+      }
+    };
+    applyHitFlash(this.rival, this.time < this.rivalHitUntil, 0x6a1530, 1.2);
+    applyHitFlash(this.player, this.time < this.playerHitUntil, 0x28516a, .8);
     this.player.root.position.y = Math.sin(this.time * (moving ? 11 : 2.3)) * (moving ? .035 : .018);
     this.rival.root.position.y = Math.sin(this.time * 1.8 + .8) * .035;
     this.player.limbs.legs.forEach((leg, i) => {
