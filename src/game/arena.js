@@ -129,6 +129,7 @@ export class Arena {
     this.scene.add(this.player.root, this.rival.root);
     this.playerHealth = 100;
     this.rivalHealth = 100;
+    this.rivalPhase = 1;
     this.move = { x: 0, y: 0 };
     this.playerVelocity = new THREE.Vector3();
     this.dodgeVector = new THREE.Vector3();
@@ -256,14 +257,14 @@ export class Arena {
         const facingYaw = Math.atan2(toward.x, toward.z);
         this.rival.root.rotation.y = facingYaw;
         if (distance > 4.1) {
-          this.rival.root.position.addScaledVector(toward, dt * (distance > 6.5 ? 1.45 : .92));
+          this.rival.root.position.addScaledVector(toward, dt * (distance > 6.5 ? 1.45 : .92) * (this.rivalPhase === 2 ? 1.32 : 1));
           rivalMoving = true;
         } else if (distance < 2.9) {
-          this.rival.root.position.addScaledVector(toward, -dt * .58);
+          this.rival.root.position.addScaledVector(toward, -dt * .58 * (this.rivalPhase === 2 ? 1.2 : 1));
           rivalMoving = true;
         } else if (distance > 3.25 && Math.sin(this.time * .72) > -.45) {
           const orbit = new THREE.Vector3(-toward.z, 0, toward.x);
-          this.rival.root.position.addScaledVector(orbit, dt * .34 * (Math.sin(this.time * .5) >= 0 ? 1 : -1));
+          this.rival.root.position.addScaledVector(orbit, dt * .34 * (this.rivalPhase === 2 ? 1.3 : 1) * (Math.sin(this.time * .5) >= 0 ? 1 : -1));
           rivalMoving = true;
         }
       }
