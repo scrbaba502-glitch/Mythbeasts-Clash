@@ -245,7 +245,7 @@ export class Arena {
     const dx = sx * .72 + sy * .69;
     const dz = sx * -.69 + sy * .72;
     const p = this.player.root.position;
-    const targetVelocity = this.combatActive !== false
+    const targetVelocity = this.combatActive !== false && this.time >= (this.playerControlLockedUntil || 0)
       ? new THREE.Vector3(dx * 4.2, 0, dz * 4.2)
       : new THREE.Vector3();
     const response = 1 - Math.exp(-dt * (inputLength > .12 ? 12 : 17));
