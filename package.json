@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "check": "node --check src/main.js && node --check src/game/arena.js && node --check src/game/controls.js && node --check src/game/combat.js && node --check src/game/animation.js && node --check src/game/characters.js && npm test",
+    "check": "node --check src/main.js && node --check src/game/arena.js && node --check src/game/controls.js && node --check src/game/combat.js && node --check src/game/animation.js && node --check src/game/characters.js && node --check src/game/environment.js && node --check src/game/environment-assets.js && npm test",
     "test": "node --test"
   },
   "dependencies": {
