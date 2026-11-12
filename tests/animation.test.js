@@ -21,7 +21,7 @@ test("animation controller maps authored clip names and crossfades locomotion", 
   assert.equal(controller.state, "attack");
   controller.setLocomotion(true);
   assert.equal(controller.state, "attack", "locomotion must not interrupt a committed action");
-  controller.update(.25);
+  for (let frame = 0; frame < 5; frame++) controller.update(.05);
   assert.equal(controller.state, "locomotion", "finished one-shot should return to locomotion");
   controller.destroy();
   assert.equal(controller.destroyed, true);
