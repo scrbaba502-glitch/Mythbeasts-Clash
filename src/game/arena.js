@@ -196,6 +196,7 @@ export class Arena {
   }
   triggerAttack() { this.attackUntil = this.time + .36; this.player.animator?.play("attack"); }
   triggerRivalAttack() { this.rivalAttackUntil = this.time + .56; this.rival.animator?.play("bossWindup") || this.rival.animator?.play("attack"); }
+  triggerRivalStrike() { this.rival.animator?.play("attack"); }
   triggerRivalHit() { this.rivalHitUntil = this.time + .22; this.rival.animator?.play("hit"); }
   triggerPlayerHit() { this.playerHitUntil = this.time + .2; this.player.animator?.play("hit"); }
   onFrame(callback) { this.frames.push(callback); }
