@@ -1,125 +1,150 @@
-# Champion art and animation bible
+# MYTHBEASTS CLASH — Champion Visual Bible
 
-This document is the visual production contract for the first champion roster. These are original design directions, not claims that final character assets already exist.
+**Status:** Production art direction locked  
+**Visual DNA:** Mythic Dark Fantasy + Beastborn Realism + Lost Worlds + Elemental Cinematic  
+**Character target:** Realistic creatures with detailed organic anatomy  
+**Camera constraint:** Elevated isometric 3D; all critical reads must survive a phone-sized display
 
-## Shared visual language
+This is the visual production contract for the champion roster. It supersedes any prototype proxy appearance. The descriptions are original design direction, not claims that finished production assets already exist.
 
-The world is ancient myth after a catastrophic rupture: carved stone, weathered metal, mineral surfaces, elemental light, and silhouettes that remain readable from the elevated isometric camera. Champions should feel like legendary living beings wearing purposeful armor—not identical humanoid robots with different paint.
+## 1. Franchise-wide visual rules
 
-Every champion needs:
-- A recognizable silhouette at small mobile-screen scale
-- A distinct body plan, stance, locomotion rhythm, and center of gravity
-- A weapon or natural combat anatomy that supports their fighting style
-- A restrained primary palette and one strong elemental light signature
-- Idle, locomotion, start/stop, turn, attack anticipation, active strike, recovery, dodge, hit reaction, stagger, skill, ultimate, victory, and defeat animation states
-- Rigging and animation transitions designed for gameplay readability, not just cinematic posing
+MYTHBEASTS CLASH depicts a world shaped by a primordial rupture. Its champions are living mythic species—not humans in themed costumes, plastic toys, generic robots, or recolored copies of one base mesh.
 
-## Vyrak — The Emberbound
+### Anatomy and form
+- Start with a believable creature skeleton, muscle groups, joints, mass distribution, and locomotion. Design armor around the anatomy rather than using armor to hide a generic body.
+- Preserve species-specific body plans: digitigrade legs, tails, muzzles, jaw structure, horns, claws, feathers, fur, scales, and other functional anatomy where appropriate.
+- Show readable muscle and tendon transitions at shoulders, hips, elbows, knees, neck, and jaw. Avoid noisy over-sculpting that disappears at gameplay distance.
+- Faces need an expressive brow, eye placement, muzzle/beak/jaw silhouette, and a readable emotional range. Eyes should feel alive, not like glowing LEDs.
+- Use asymmetry with purpose: scars, worn armor, broken horns, trophies, uneven plates, and battle damage should tell a story.
+- Armor is crafted, grown, or bound to the creature. It must flex or articulate at joints and never look like a featureless mechanical shell.
 
-**Role:** balanced close-range bruiser and the first playable champion.
+### Shape language and readability
+- Every champion must be recognizable in a black silhouette at thumbnail scale.
+- Distinguish head, shoulders, weapon, tail/wings and stance. Avoid silhouette overlap between roster members.
+- Keep primary forms bold; reserve micro-detail for close inspection and promotional renders.
+- The weapon and body must communicate weight, reach, and combat role before an attack lands.
 
-**Silhouette:** drake-blooded warrior with a powerful forward-leaning torso, digitigrade lower legs, a pronounced tail, ridged brow, and asymmetrical volcanic plate armor. Avoid a smooth human mannequin silhouette.
+### Material language
+Use physically based glTF metallic-roughness materials. Favor sculpted surface breakup and believable response to light:
+- Skin/scales/fur/feathers: varied roughness and subtle color variation; no uniform plastic gloss.
+- Metal: edge wear, forged imperfections, restrained metallic response.
+- Stone/crystal/ice: layered roughness, depth and controlled translucency where mobile performance permits.
+- Emissive energy: localized and purposeful. Glow must illuminate nearby forms without washing out anatomy.
+- Avoid excessive bloom, full-body neon outlines, noisy procedural textures, and unmotivated emissive seams.
 
-**Materials and palette:** charcoal basalt, dark bronze, ember-orange fissures, heat-glow concentrated around the chest core and weapon edge.
+### Color and cinematic balance
+The world balances three equal atmospheric ingredients:
+1. **Dark and mysterious:** shadow, ancient danger, weathering, void and tension.
+2. **Legendary and ancient:** sacred geometry, monumental ruins, relics, mythic symbols and history.
+3. **Elemental and spectacular:** fire, frost, solar light, storm energy and high-impact cinematic moments.
 
-**Weapon language:** a heavy single-edge volcanic cleaver. The weapon should visibly carry weight; shoulder and torso rotation lead the swing.
+No single ingredient should dominate every scene. Keep champions readable against their environment using value contrast, rim light and restrained elemental accents.
 
-**Movement language:** deliberate grounded steps, weight transfer, tail counterbalance, a short explosive forward burst on dodge. Attacks communicate commitment through anticipation and recovery.
+## 2. Champion production briefs
 
-**Combat identity:** reliable close-range pressure, a short ember burst, and a high-impact finishing ultimate.
+### Vyrak — The Emberbound
+**Role:** Balanced close-range bruiser; first playable champion.
 
-## Frostfang — The Pale Hunt
+- **Species/form:** Draconic beastborn warrior. Powerful forward-leaning torso, digitigrade legs, long muscular tail, scaled neck, pronounced brow, strong jaw and clawed hands.
+- **Anatomy:** Heavy chest and shoulder mass, visible rib-to-abdomen transition, powerful hips and legs. Tail acts as a counterbalance, not a decorative appendage.
+- **Silhouette:** Broad upper body, horned/ridged head, asymmetric volcanic shoulder plates, long tail and heavy cleaver. Must not read as a human knight with a dragon helmet.
+- **Face:** Predatory but intelligent; strong muzzle/jaw, deep-set eyes and a distinctive brow ridge.
+- **Materials/palette:** Charcoal basalt scales, dark bronze, scorched leather, ember-orange fissures concentrated near the chest core and weapon. Heat should feel beneath the surface.
+- **Weapon:** Heavy single-edge volcanic cleaver. Shoulder and torso rotation lead each swing; weapon weight is visible in anticipation and recovery.
+- **Movement:** Grounded deliberate steps, weight transfer through hips, tail counterbalance, short explosive dodge burst, heavy landing compression.
+- **Signature:** Ember burst and a high-impact finisher tied to the Primordial Core.
+- **Avoid:** Smooth human mannequin proportions, uniform metal armor, constant flame aura, tiny unreadable scales.
 
-**Role:** mobile predator and evasive counter-attacker.
+### Frostfang — The Pale Hunt
+**Role:** Mobile predator and evasive counter-attacker.
 
-**Silhouette:** lupine beast-warrior with digitigrade legs, long tail, angular ears, a forward hunting posture, and layered ice-grown shoulder and forearm armor. The head and muzzle should read clearly from the isometric camera.
+- **Species/form:** Lupine ice-born beast. Digitigrade legs, long balancing tail, angular ears, long muzzle, powerful haunches and expressive predatory head.
+- **Anatomy:** Dense layered fur over clear muscle groups; shoulders and haunches built for sprinting and pouncing. Forearms and claws remain functional.
+- **Silhouette:** Low hunting posture, swept-back fur/crest, angular ears, long tail and ice-grown forearm blades. Clearly distinct from Vyrak's upright heavy mass.
+- **Face:** Focused hunter, visible muzzle and jaw, expressive ears and eyes; no featureless wolf mask.
+- **Materials/palette:** Cold slate, pale silver, off-white fur, translucent glacial blue accents and subtle frost vapor. Fur breakup must remain readable without thousands of costly strands.
+- **Weapon:** Natural claw strikes supported by forearm blades or ice-grown talons; no generic oversized sword.
+- **Movement:** Stalking idle, quick directional changes, pounce with visible compression, sharp landing and fast recovery.
+- **Signature:** Freezing burst and evasive counter windows.
+- **Avoid:** Blue recolor of another champion, spiky ice armor covering all anatomy, constant particle fog.
 
-**Materials and palette:** cold slate, pale silver, translucent glacial blue, subtle frost vapor.
+### Solarius — The Dawnforged
+**Role:** Disciplined mid-range guardian with controlled reach.
 
-**Weapon language:** natural claw strikes supported by forearm blades or ice-grown talons; no generic oversized sword.
+- **Species/form:** Avian/solar beast champion, not a human wearing feather decorations. Strong birdlike head/crest, avian leg structure where practical, feathered or feather-armored mantle and broad wing silhouette.
+- **Anatomy:** Lean powerful torso, articulated shoulder/wing roots, strong legs and a stable planted guard. Wings must fold and move plausibly.
+- **Silhouette:** Upright regal posture, swept crest, layered feather mantle, sun-disc shield and long spear. Wings/energy must not obscure the combat read.
+- **Face:** Sharp avian profile, focused eyes and a distinct beak shape.
+- **Materials/palette:** Warm ivory, aged gold, muted bronze, white-hot solar accents and restrained amber glow. Avoid polished all-gold surfaces.
+- **Weapon:** Long sun-spear and compact radiant shield; thrust, guard and counter silhouettes must be unmistakable.
+- **Movement:** Poised footwork, measured pivots, strong planted guards, clean lunges; aerial lift only when supported by gameplay.
+- **Signature:** Solar area denial and timed defensive counter.
+- **Avoid:** Angelic human silhouette, excessive white bloom, permanently extended wings that clutter the camera.
 
-**Movement language:** low center of gravity, quick directional changes, stalking idle, sharp pounce, visible landing compression, and fast recovery.
+### Raijin — The Stormbound
+**Role:** Heavy disruptor with explosive burst windows.
 
-**Combat identity:** spacing, rapid multi-hit strings, evasive counters, and a freezing burst.
+- **Species/form:** Broad oni-like storm beast titan with thick forearms, powerful legs, horned crown and storm conduits integrated into armor and anatomy.
+- **Anatomy:** Dense shoulder and forearm mass, heavy torso, strong neck and grounded legs. Weight should be visible in turns and landings.
+- **Silhouette:** Asymmetric shoulder mass, horned head, broad forearms and compact heavy weapon. Distinct from Vyrak through bulk, crown and storm profile.
+- **Face:** Intimidating but expressive; strong jaw, deep brow and controlled storm-lit eyes.
+- **Materials/palette:** Deep indigo, weathered iron, dark stone, electric cyan and occasional violet arcs.
+- **Weapon direction:** Thunder hammer as the initial preferred concept; lock final weapon after silhouette/concept review. Do not mix paired tonfas and hammer in production assets.
+- **Movement:** Heavy planted steps interrupted by sudden lightning-fast bursts; shoulder recoil and grounded landings.
+- **Signature:** Guard-breaking impact, short shockwaves and storm-chain ultimate.
+- **Avoid:** Generic humanoid tank, constant lightning spaghetti, oversized armor that hides anatomy.
 
-## Solarius — The Dawnforged
+### Atrox Nefas — The Hollow Sovereign
+**Role:** Central story antagonist and ultimate threat.
 
-**Role:** disciplined mid-range guardian with controlled reach.
+- **Form:** Towering primordial entity with an intentionally unnatural, asymmetrical body plan. It should feel ancient and wrong—not a larger recolor of Vyrak.
+- **Silhouette:** Broken crown-like horns, elongated arms, layered void plates, floating fragments and an unmistakable upper-body outline.
+- **Materials/palette:** Obsidian, desaturated bone, deep violet-black and narrow crimson-violet fissures. Emissive energy is sparse until phase escalation.
+- **Movement:** Oppressive stillness interrupted by sudden displacement; no ordinary humanoid idle loop. Environmental distortion precedes major attacks.
+- **Encounter readability:** Every attack has a clear telegraph, active danger zone and punishable recovery. Phase two visibly changes silhouette/material energy without obscuring attack tells.
+- **Story identity:** The Hollow Sovereign is tied to the Primordial Core and must feel like the source of the world's rupture.
 
-**Silhouette:** tall avian/solar champion with a proud upright posture, layered feather-like mantle plates, swept crest, and broad sun-disc shield profile. Wings are armor-like or partially energy-formed and must not obscure the combat read.
+## 3. Animation performance bible
 
-**Materials and palette:** warm ivory, aged gold, white-hot solar accents, restrained amber glow.
+Production characters require authored skeletal animation. Procedural motion may add secondary motion but must not replace the core performance.
 
-**Weapon language:** a long sun-spear and a compact radiant shield; clear thrust and guard silhouettes.
+Required gameplay states:
+- Idle/breathing, locomotion, start, stop, turn, strafe and directional dodge
+- Attack anticipation, active strike, follow-through and recovery for each move
+- Combo transitions, skill, ultimate, hit reactions of multiple severities, stagger and knockdown where used
+- Victory, defeat, intro and champion-select presentation
+- Boss-specific windups, phase transition and terminal states
 
-**Movement language:** poised footwork, measured pivots, strong planted guards, clean lunges, and graceful aerial lift only when gameplay supports it.
+Rules:
+1. Every damaging action communicates anticipation before impact and recovery after it.
+2. Weight transfer starts at the hips/torso; limbs do not swing independently like puppets.
+3. Preserve foot contact and believable ground reaction. No skating or floating.
+4. Tails, fur, feathers, cloth, chains and armor use restrained secondary motion; they must not delay combat readability.
+5. Use crossfades and compatible rest poses. Avoid pose pops and abrupt snapping.
+6. The hitbox timing must match the visible weapon/body contact and VFX.
+7. Test all clips from the actual elevated isometric camera on a phone-sized viewport.
+8. Do not let VFX hide the fighter, weapon arc, enemy telegraph or ground danger marker.
 
-**Combat identity:** controlled reach, defensive timing, counter-thrusts, and a solar area denial ultimate.
+## 4. Isometric camera review standard
 
-## Raijin — The Stormbound
+Review at three distances: normal gameplay framing, slightly zoomed-out battlefield framing, and close inspection. At normal gameplay scale:
+- Head direction, facing, weapon arc and feet/ground contact remain legible.
+- Each champion is identifiable without relying on color alone.
+- Important animation poses read in a brief glance.
+- Health bars and effects do not cover faces or key silhouette features.
+- Arena lighting separates both fighters from the floor and background.
 
-**Role:** heavy disruptor with explosive burst windows.
+## 5. Production acceptance gate
 
-**Silhouette:** broad oni-like storm titan with asymmetrical shoulder mass, thick forearms, powerful legs, horned crown, and visible storm conduits across the armor.
+A champion is **not production-ready** because a model file exists or a concept image looks impressive. It must pass all of the following together in-game:
+- Approved front/side/three-quarter concept and silhouette sheet
+- Correct species anatomy, proportions, facial expression and unique silhouette
+- Clean topology, deformation, rig and skin weights
+- PBR materials, texture integrity and mobile memory budget
+- Complete named animation set on one compatible skeleton
+- Correct weapon attachments, hitboxes and combat timing
+- Isometric readability, lighting and VFX review
+- Android performance and lifecycle test on target hardware
 
-**Materials and palette:** deep indigo, weathered iron, electric cyan, occasional violet arcs.
-
-**Weapon language:** paired thunder tonfas or a compact thunder hammer; choose one final direction during concept approval and keep it consistent.
-
-**Movement language:** heavy planted steps punctuated by sudden lightning-fast bursts, recoil in the shoulders, and grounded landings.
-
-**Combat identity:** guard-breaking impact, short-range shockwaves, interruption, and a storm-chain ultimate.
-
-## Atrox Nefas — The Hollow Sovereign
-
-**Role:** central story antagonist and ultimate threat.
-
-**Silhouette:** towering primordial entity with an intentionally unnatural asymmetrical body plan. Its outline should feel ancient and wrong: layered void plates, broken crown-like horns, elongated arms, and floating fragments that react to its power.
-
-**Materials and palette:** obsidian, desaturated bone, deep violet-black, narrow crimson-violet fissures. Avoid a simple recolor of Vyrak.
-
-**Movement language:** calm oppressive stillness interrupted by sudden impossible displacement; attacks are telegraphed with environmental distortion before impact.
-
-**Encounter identity:** readable attack tells, punishable recovery windows, escalating phase behavior, and a final transformation tied to the Primordial Core.
-
-## Visual benchmark and environment direction
-
-The first arena must read as a location in a mythic world, not a test stage. The Ruined Sanctuary uses a broad rectangular combat floor, worn flagstones, monumental broken architecture, guardian effigies, braziers, elemental crystal pylons, a distant ruined skyline, and atmospheric fog. Keep the center clear for combat and push scenic silhouettes to the perimeter. Use warm firelight against cool moonlit stone, strong material roughness variation, believable scale, and layered depth. Avoid debug grids, empty flat floors, simple boxed boundaries, and sparse low-poly set dressing as a final presentation.
-
-Champion and environment assets must share one premium dark-fantasy material language: sculpted forms, believable surface breakup, restrained emissive accents, and silhouettes that remain legible on a phone. Procedural primitives are blockout tools only. The final visual target requires original sculpted and textured models, authored animation, and reviewed environment assets.
-
-## Animation and gameplay readability rules
-
-1. Use authored skeletal rigs and animation clips for production characters. Procedural movement may supplement but must not replace the core animation set.
-2. Every damaging move has anticipation, active frames, and recovery. The visual tell must precede the hit.
-3. Keep foot contact believable during locomotion and planted attacks. Avoid skating.
-4. Blend locomotion, turns, upper-body actions, and hit reactions without snapping between poses.
-5. Use brief, controlled hit-stop and camera feedback; never sacrifice input responsiveness.
-6. Preserve clear weapon arcs and avoid excessive VFX that hide fighters or attack timing.
-7. Validate silhouettes, health readability, and effects on a real phone at typical viewing distance.
-8. Build LODs and mobile-friendly materials; profile before increasing particle counts or shadow quality.
-
-## Asset acceptance gate
-
-A champion is not production-ready until the model, rig, materials, animation states, combat hitboxes, and in-game camera read have all been reviewed together. A static concept image or a greybox mesh is not a completed fighter.
-
-## Technical animation delivery contract
-
-The runtime accepts GLB assets under `public/assets/characters/<character>/`. Keep each character's animation clips in the same GLB and on the same deform skeleton. Clip names are case-insensitive; the runtime maps these aliases:
-
-| Runtime state | Accepted clip names |
-|---|---|
-| idle | Idle, Breathing, Stand |
-| locomotion | Run, Walk, Locomotion, Move |
-| attack | Attack, LightAttack, Strike |
-| dodge | Dodge, Roll, Dash |
-| hit | Hit, HitReact, Damage |
-| stagger | Stagger, Stun |
-| skill | Skill, Special, Ability |
-| victory | Victory, Win |
-| defeat | Defeat, Death, Lose |
-| bossWindup | Windup, Telegraph, Charge |
-
-One-shot actions should be authored with clear anticipation and recovery. Locomotion clips should be in-place so the gameplay controller remains authoritative for world movement. Root motion is not enabled in this first integration. Missing clips safely fall back to the prototype model or the current available animation state; they must not crash the encounter.
-
-Before accepting a champion asset, test every clip in the actual isometric camera, verify the ground contact and facing direction, inspect material/texture memory, and confirm that crossfades do not introduce pose pops.
+Greybox/procedural proxies are explicitly temporary development tools. They must never be represented as final art.
