@@ -3,7 +3,9 @@ import * as THREE from "three";
 const CLIP_ALIASES = {
   idle: ["idle", "breathing", "stand"],
   locomotion: ["run", "walk", "locomotion", "move"],
-  attack: ["attack", "lightattack", "strike"],\n  attack2: ["attack2", "combo2", "heavyattack"],\n  attack3: ["attack3", "combo3", "finisher"],
+  attack: ["attack", "lightattack", "strike"],
+  attack2: ["attack2", "combo2", "heavyattack"],
+  attack3: ["attack3", "combo3", "finisher"],
   dodge: ["dodge", "roll", "dash"],
   hit: ["hit", "hitreact", "damage"],
   stagger: ["stagger", "stun"],

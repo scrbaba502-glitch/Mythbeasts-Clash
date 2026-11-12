@@ -82,12 +82,6 @@ Every champion needs:
 
 **Encounter identity:** readable attack tells, punishable recovery windows, escalating phase behavior, and a final transformation tied to the Primordial Core.
 
-## Visual benchmark and environment direction
-
-The first arena must read as a location in a mythic world, not a test stage. The Ruined Sanctuary uses a broad rectangular combat floor, worn flagstones, monumental broken architecture, guardian effigies, braziers, elemental crystal pylons, a distant ruined skyline, and atmospheric fog. Keep the center clear for combat and push scenic silhouettes to the perimeter. Use warm firelight against cool moonlit stone, strong material roughness variation, believable scale, and layered depth. Avoid debug grids, empty flat floors, simple boxed boundaries, and sparse low-poly set dressing as a final presentation.
-
-Champion and environment assets must share one premium dark-fantasy material language: sculpted forms, believable surface breakup, restrained emissive accents, and silhouettes that remain legible on a phone. Procedural primitives are blockout tools only. The final visual target requires original sculpted and textured models, authored animation, and reviewed environment assets.
-
 ## Animation and gameplay readability rules
 
 1. Use authored skeletal rigs and animation clips for production characters. Procedural movement may supplement but must not replace the core animation set.
