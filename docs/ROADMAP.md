@@ -15,6 +15,8 @@
 - [x] Add crossfading skeletal animation-state controller and named clip mapping
 - [x] Add attack anticipation / active / recovery timing and directional hit confirmation
 - [x] Add adaptive boss approach, spacing, orbit, and engagement-range telegraphs
+- [x] Add visible ground danger markers and phase-two Abyss Slam attack pattern
+- [x] Add player action commitment windows, hit stun, and late-asset teardown protection
 - [x] Document Blender/glTF character asset, rig, animation, export, and acceptance pipeline
 - Refine thumb controls using device testing and multi-touch edge cases
 - Improve battlefield art direction, collision, camera framing, and performance budgets
