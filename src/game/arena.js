@@ -75,7 +75,7 @@ function makeFighter({ color, glow, scale = 1, x = 0, z = 0, boss = false }) {
       root.add(horn);
     }
   }
-  return { root, limbs, weapon, bodyMat, glowMat, scale };
+  return { root, limbs, weapon, body, bodyMat, glowMat, scale };
 }
 
 export class Arena {
@@ -131,6 +131,9 @@ export class Arena {
     this.dodgeVector = new THREE.Vector3();
     this.dodgeUntil = 0;
     this.attackUntil = 0;
+    this.rivalAttackUntil = 0;
+    this.rivalHitUntil = 0;
+    this.playerHitUntil = 0;
     this.frames = [];
     this.time = 0;
     this.cameraMode = 0;
@@ -190,6 +193,9 @@ export class Arena {
     this.dodgeUntil = this.time + .24;
   }
   triggerAttack() { this.attackUntil = this.time + .36; }
+  triggerRivalAttack() { this.rivalAttackUntil = this.time + .56; }
+  triggerRivalHit() { this.rivalHitUntil = this.time + .22; }
+  triggerPlayerHit() { this.playerHitUntil = this.time + .2; }
   onFrame(callback) { this.frames.push(callback); }
 
   update(dt) {
@@ -202,8 +208,10 @@ export class Arena {
     const dx = sx * .72 + sy * .69;
     const dz = sx * -.69 + sy * .72;
     const p = this.player.root.position;
-    p.x = clamp(p.x + dx * dt * 4.2, -10.4, 10.4);
-    p.z = clamp(p.z + dz * dt * 4.2, -8.3, 8.3);
+    if (this.combatActive !== false) {
+      p.x = clamp(p.x + dx * dt * 4.2, -10.4, 10.4);
+      p.z = clamp(p.z + dz * dt * 4.2, -8.3, 8.3);
+    }
     if (this.time < this.dodgeUntil) {
       p.x = clamp(p.x + this.dodgeVector.x * dt * 8.2, -10.4, 10.4);
       p.z = clamp(p.z + this.dodgeVector.z * dt * 8.2, -8.3, 8.3);
@@ -215,11 +223,20 @@ export class Arena {
     const moving = inputLength > .12;
     if (moving) this.player.root.rotation.y = Math.atan2(dx, dz);
     const dist = p.distanceTo(this.rival.root.position);
-    if (dist > 2.6) {
+    if (dist > 2.6 && this.time >= this.rivalAttackUntil) {
       const toward = p.clone().sub(this.rival.root.position).setY(0).normalize();
       this.rival.root.position.addScaledVector(toward, dt * (dist > 5 ? 1.15 : .42));
       this.rival.root.rotation.y = Math.atan2(-toward.x, -toward.z);
     }
+    const rivalWindup = this.time < this.rivalAttackUntil;
+    const rivalAttackProgress = rivalWindup ? 1 - (this.rivalAttackUntil - this.time) / .56 : 0;
+    this.rival.limbs.arms[0].rotation.x += ((rivalWindup ? -.95 * Math.sin(rivalAttackProgress * Math.PI) : 0) - this.rival.limbs.arms[0].rotation.x) * Math.min(1, dt * 18);
+    this.rival.root.rotation.z += ((this.time < this.rivalHitUntil ? .12 : 0) - this.rival.root.rotation.z) * Math.min(1, dt * 18);
+    this.player.root.rotation.z += ((this.time < this.playerHitUntil ? -.1 : 0) - this.player.root.rotation.z) * Math.min(1, dt * 18);
+    this.rival.bodyMat.emissive.setHex(this.time < this.rivalHitUntil ? 0x6a1530 : 0x000000);
+    this.rival.bodyMat.emissiveIntensity = this.time < this.rivalHitUntil ? 1.2 : 0;
+    this.player.bodyMat.emissive.setHex(this.time < this.playerHitUntil ? 0x28516a : 0x000000);
+    this.player.bodyMat.emissiveIntensity = this.time < this.playerHitUntil ? .8 : 0;
     this.player.root.position.y = Math.sin(this.time * 2.3) * .025;
     this.rival.root.position.y = Math.sin(this.time * 1.8 + .8) * .035;
     this.player.limbs.legs.forEach((leg, i) => {
