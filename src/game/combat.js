@@ -10,6 +10,8 @@ export class CombatSystem {
     this.message = document.querySelector("#battle-message");
     this.phase = document.querySelector("#phase-label");
     this.ended = false;
+    this.pendingAttack = null;
+    this.pendingSkill = null;
     this.bossAttackAt = 2.6;
     this.telegraphAt = 0;
     this.perform = this.perform.bind(this);
@@ -29,9 +31,8 @@ export class CombatSystem {
     if (action === "attack") {
       this.cooldowns.attack = now + .58;
       this.arena.triggerAttack();
-      const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
-      if (distance < 3.7) this.damageRival(9);
-      else this.announce("OUT OF REACH — CLOSE THE DISTANCE");
+      this.pendingAttack = { activeAt: now + .13, recoverAt: now + .36, resolved: false };
+      this.announce("VYRAK COMMITS — FOLLOW THROUGH");
     }
     if (action === "dodge") {
       this.cooldowns.dodge = now + .92;
@@ -42,9 +43,8 @@ export class CombatSystem {
     }
     if (action === "skill") {
       this.cooldowns.skill = now + 5;
-      const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
-      if (distance < 7.2) this.damageRival(22);
-      else this.announce("EMBER BURST — TARGET OUT OF RANGE");
+      this.pendingSkill = { resolveAt: now + .32 };
+      this.announce("EMBER BURST — RELEASE");
     }
   }
 
@@ -62,7 +62,20 @@ export class CombatSystem {
 
   update(dt, now) {
     if (this.ended) return;
-    this.skillLabel.textContent = this.cooldowns.skill > now ? this.cooldowns.skill - now + "s" : "READY";
+    this.skillLabel.textContent = this.cooldowns.skill > now ? (this.cooldowns.skill - now).toFixed(1) + "s" : "READY";
+    if (this.pendingAttack && !this.pendingAttack.resolved && now >= this.pendingAttack.activeAt) {
+      this.pendingAttack.resolved = true;
+      const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
+      if (distance < 3.7) this.damageRival(9);
+      else this.announce("OUT OF REACH — CLOSE THE DISTANCE");
+    }
+    if (this.pendingAttack && now >= this.pendingAttack.recoverAt) this.pendingAttack = null;
+    if (this.pendingSkill && now >= this.pendingSkill.resolveAt) {
+      this.pendingSkill = null;
+      const distance = this.arena.player.root.position.distanceTo(this.arena.rival.root.position);
+      if (distance < 7.2) this.damageRival(22);
+      else this.announce("EMBER BURST — TARGET OUT OF RANGE");
+    }
     this.arena.rival.glowMat.emissiveIntensity += (1.7 - this.arena.rival.glowMat.emissiveIntensity) * Math.min(1, dt * 8);
     if (now >= this.bossAttackAt) {
       this.bossAttackAt = now + (this.arena.rivalHealth <= 50 ? 1.9 : 2.6);
