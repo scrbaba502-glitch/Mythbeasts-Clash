@@ -68,3 +68,22 @@ test("boss hit reaction is triggered when player damage lands", t => {
   assert.equal(arena.rivalHealth, 88);
   assert.equal(hitReactions, 1);
 });
+
+
+test("melee strike must face the rival to confirm a hit", t => {
+  const oldDocument = globalThis.document;
+  const elements = new Map();
+  globalThis.document = { querySelector(selector) {
+    if (!elements.has(selector)) elements.set(selector, makeElement());
+    return elements.get(selector);
+  }};
+  t.after(() => { if (oldDocument === undefined) delete globalThis.document; else globalThis.document = oldDocument; });
+
+  const arena = makeArena();
+  arena.isPlayerFacingRival = () => false;
+  const combat = new CombatSystem(arena);
+  combat.perform("attack");
+  combat.update(.13, .13);
+  assert.equal(arena.rivalHealth, 100, "a melee strike from the wrong direction must not hit");
+  assert.match(elements.get("#battle-message").textContent, /WRONG DIRECTION/);
+});
