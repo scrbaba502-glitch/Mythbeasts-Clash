@@ -1,0 +1,55 @@
+name: Mythbeasts Clash · Android debug APK
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/isometric-foundation
+      - main
+permissions:
+  contents: read
+concurrency:
+  group: mythbeasts-android-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Static checks
+        run: npm run check
+      - name: Build web game
+        run: npm run build
+      - name: Configure Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Accept SDK licences and install platform
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+      - name: Add Android platform
+        run: npx cap add android
+      - name: Sync Android project
+        run: npx cap sync android
+      - name: Assemble debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+      - name: Upload unsigned debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: mythbeasts-clash-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

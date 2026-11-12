@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#090d18" />
+    <meta name="description" content="MYTHBEASTS CLASH — A² Presents. A mythic 3D combat experience." />
+    <title>MYTHBEASTS CLASH · A² Presents</title>
+  </head>
+  <body>
+    <main id="game-root">
+      <div id="world" aria-label="3D mythic battlefield"></div>
+      <section id="title-screen" class="title-screen">
+        <div class="title-content"><span class="title-kicker">A² PRESENTS · ORIGINAL MYTHIC COMBAT</span><h1>MYTHBEASTS<br><em>CLASH</em></h1><p>THE PRIMORDIAL CORE IS BREAKING</p><div class="title-divider"><i></i><b>✦</b><i></i></div><button id="start-battle">ENTER THE FIRST TRIAL</button><small>VYRAK VS ATROX NEFAS · STORY PROLOGUE</small></div>
+      </section>
+      <header class="top-hud">
+        <div class="brand"><span>A² PRESENTS</span><strong>MYTHBEASTS CLASH</strong></div>
+        <div class="match-state"><span class="live-dot"></span><span id="phase-label">THE FIRST CONVERGENCE</span></div>
+      </header>
+      <section class="combat-hud" aria-label="Fighter vitality">
+        <div class="fighter-status player-status">
+          <div class="fighter-name"><b>VYRAK</b><span>THE EMBERBOUND</span></div>
+          <div class="health-track"><i id="player-health"></i></div>
+        </div>
+        <div class="fighter-status rival-status">
+          <div class="fighter-name"><b>ATROX</b><span>THE ABYSSAL KING</span></div>
+          <div class="health-track"><i id="rival-health"></i></div>
+        </div>
+      </section>
+      <div class="battle-message" id="battle-message" aria-live="polite">MOVE. READ THE ENEMY. STRIKE WITH PURPOSE.</div>
+      <footer class="touch-hud" aria-label="Combat controls">
+        <div class="movement-zone">
+          <div id="move-pad" class="move-pad" aria-label="Move champion">
+            <div class="pad-ring"></div><div id="move-knob" class="move-knob"></div>
+            <span class="pad-label">MOVE</span>
+          </div>
+        </div>
+        <div class="action-zone">
+          <button class="action action-camera" data-action="camera" aria-label="Change camera view">VIEW</button>
+          <button class="action action-skill" data-action="skill" aria-label="Champion skill"><span>SKILL</span><small id="skill-cooldown">READY</small></button>
+          <button class="action action-dodge" data-action="dodge" aria-label="Dodge">DODGE</button>
+          <button class="action action-attack" data-action="attack" aria-label="Attack">STRIKE</button>
+        </div>
+      </footer>
+      <div id="result-overlay" class="result-overlay" hidden><div class="result-panel"><span>A² PRESENTS</span><strong id="result-title">BATTLE COMPLETE</strong><p id="result-copy">The first encounter has ended.</p><button id="restart-battle">FIGHT AGAIN</button></div></div>
+      <div id="startup-error" class="startup-error" hidden></div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

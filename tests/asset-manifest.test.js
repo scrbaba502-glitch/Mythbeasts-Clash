@@ -1,0 +1,65 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { getMissingRequiredClips } from "../src/game/characters.js";
+import { hasAnimationClip } from "../src/game/animation.js";
+
+const manifestUrl = new URL("../public/assets/characters/manifest.json", import.meta.url);
+const manifest = JSON.parse(await readFile(manifestUrl, "utf8"));
+
+test("character manifest declares the production coordinate contract", () => {
+  assert.equal(manifest.schemaVersion, 1);
+  assert.equal(manifest.units, "meters");
+  assert.equal(manifest.forwardAxis, "+Z");
+  assert.equal(manifest.upAxis, "+Y");
+  assert.equal(manifest.rootAtGround, true);
+});
+test("Vyrak production manifest includes the complete three-hit combo", () => {
+  const vyrak = manifest.characters.vyrak;
+  assert.ok(vyrak, "Vyrak entry must exist");
+  for (const clip of ["Idle", "Locomotion", "Attack", "Attack2", "Attack3", "Dodge", "Hit", "Skill", "Victory", "Defeat"]) {
+    assert.ok(vyrak.requiredClips.includes(clip), `Vyrak is missing required clip: ${clip}`);
+  }
+  assert.match(vyrak.model, /^\/assets\/characters\/vyrak\/.+\.glb$/);
+  assert.equal(vyrak.assetStatus, "production-asset-pending");
+});
+test("Atrox production manifest includes boss telegraph and reaction clips", () => {
+  const atrox = manifest.characters.atrox;
+  assert.ok(atrox, "Atrox entry must exist");
+  for (const clip of ["Idle", "Locomotion", "BossWindup", "Attack", "Hit", "Stagger", "Victory", "Defeat"]) {
+    assert.ok(atrox.requiredClips.includes(clip), `Atrox is missing required clip: ${clip}`);
+  }
+  assert.match(atrox.model, /^\/assets\/characters\/atrox\/.+\.glb$/);
+});
+test("roster asset paths and clip names are unique and valid", () => {
+  const entries = Object.entries(manifest.characters);
+  assert.ok(entries.length >= 2);
+  const modelPaths = entries.map(([, entry]) => entry.model);
+  assert.equal(new Set(modelPaths).size, modelPaths.length);
+  for (const [id, entry] of entries) {
+    assert.match(id, /^[a-z][a-z0-9-]*$/);
+    assert.ok(entry.displayName && entry.role && entry.visualIdentity.length > 0);
+    assert.equal(new Set(entry.requiredClips).size, entry.requiredClips.length);
+    assert.equal(new Set(entry.optionalClips).size, entry.optionalClips.length);
+  }
+});
+test("runtime asset gate accepts aliases supported by the animation controller", () => {
+  const missing = getMissingRequiredClips(
+    ["Idle", "Locomotion", "Attack2", "BossWindup"],
+    [{ name: "idle" }, { name: "Run" }, { name: "combo_2" }, { name: "Wind Up" }]
+  );
+  assert.deepEqual(missing, []);
+});
+test("runtime asset gate reports every missing required clip", () => {
+  const missing = getMissingRequiredClips(["Idle", "Attack", "Attack2", "Attack3"], [{ name: "Idle" }, { name: "Attack" }]);
+  assert.deepEqual(missing, ["Attack2", "Attack3"]);
+});
+test("required clip validation and runtime state selection share the same aliases", () => {
+  for (const [required, actual] of [
+    ["Locomotion", "walk"], ["Attack", "light-attack"], ["Attack2", "heavy_attack"],
+    ["Attack3", "finisher"], ["Dodge", "roll"], ["Hit", "hit_react"],
+    ["Stagger", "stun"], ["Skill", "special"], ["Victory", "win"],
+    ["Defeat", "death"], ["BossWindup", "telegraph"]
+  ]) assert.equal(hasAnimationClip(required, [{ name: actual }]), true, `${actual} should satisfy ${required}`);
+  assert.equal(hasAnimationClip("Attack3", [{ name: "idle" }]), false);
+});
