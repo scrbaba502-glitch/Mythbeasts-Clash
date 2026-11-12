@@ -12,6 +12,8 @@ export class CombatSystem {
     this.ended = false;
     this.pendingAttack = null;
     this.pendingSkill = null;
+    this.actionLockUntil = 0;
+    this.playerStunnedUntil = 0;
     this.bossAttackAt = 2.6;
     this.telegraphAt = 0;
     this.perform = this.perform.bind(this);
@@ -27,22 +29,28 @@ export class CombatSystem {
       this.announce(["BATTLEFIELD VIEW", "CHAMPION VIEW", "RIVAL VIEW"][this.arena.cameraMode]);
       return;
     }
-    if (now < this.cooldowns[action]) return;
+    if (now < this.cooldowns[action] || now < this.actionLockUntil || now < this.playerStunnedUntil) return;
     if (action === "attack") {
       this.cooldowns.attack = now + .58;
       this.arena.triggerAttack();
       this.pendingAttack = { activeAt: now + .13, recoverAt: now + .36, resolved: false };
+      this.actionLockUntil = now + .36;
       this.announce("VYRAK COMMITS — FOLLOW THROUGH");
     }
     if (action === "dodge") {
       this.cooldowns.dodge = now + .92;
       this.invulnerableUntil = now + .66;
       this.dodgeUntil = now + .25;
+      this.pendingAttack = null;
+      this.pendingSkill = null;
+      this.actionLockUntil = now + .25;
       this.arena.triggerDodge();
       this.announce("PHASE DODGE — REPOSITION");
     }
     if (action === "skill") {
       this.cooldowns.skill = now + 5;
+      this.pendingAttack = null;
+      this.actionLockUntil = now + .48;
       this.arena.player.animator?.play("skill");
       this.pendingSkill = { resolveAt: now + .32 };
       this.announce("EMBER BURST — RELEASE");
@@ -103,6 +111,7 @@ export class CombatSystem {
       if (distance < 4.4 && now > this.invulnerableUntil) {
         this.arena.playerHealth = Math.max(0, this.arena.playerHealth - (this.arena.rivalHealth <= 50 ? 18 : 12));
         this.arena.triggerPlayerHit();
+        this.playerStunnedUntil = now + .38;
         this.playerBar.style.width = this.arena.playerHealth + "%";
         this.announce("ATROX CONNECTS — FIND YOUR OPENING");
         if (this.arena.playerHealth === 0) this.finish(false);
