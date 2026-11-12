@@ -122,6 +122,22 @@ export class Arena {
     grid.position.y = -.045;
     this.scene.add(grid);
     this.addRuins();
+    this.bossTelegraph = new THREE.Mesh(
+      new THREE.CircleGeometry(1, 48),
+      new THREE.MeshBasicMaterial({ color: 0xff355e, transparent: true, opacity: .18, depthWrite: false, side: THREE.DoubleSide })
+    );
+    this.bossTelegraph.rotation.x = -Math.PI / 2;
+    this.bossTelegraph.position.y = .018;
+    this.bossTelegraph.visible = false;
+    this.scene.add(this.bossTelegraph);
+    this.bossTelegraphEdge = new THREE.Mesh(
+      new THREE.RingGeometry(.965, 1, 48),
+      new THREE.MeshBasicMaterial({ color: 0xff6b84, transparent: true, opacity: .9, side: THREE.DoubleSide, depthWrite: false })
+    );
+    this.bossTelegraphEdge.rotation.x = -Math.PI / 2;
+    this.bossTelegraphEdge.position.y = .025;
+    this.bossTelegraphEdge.visible = false;
+    this.scene.add(this.bossTelegraphEdge);
 
     this.player = makeFighter({ color: 0x496f9d, glow: 0x69d7ff, x: -3.2, z: 1.3 });
     this.rival = makeFighter({ color: 0x48243e, glow: 0xff4b76, x: 3.1, z: -1.2, scale: 1.18, boss: true });
@@ -209,6 +225,12 @@ export class Arena {
   triggerAttack() { this.attackUntil = this.time + .36; this.player.animator?.play("attack"); }
   triggerRivalAttack() { this.rivalAttackUntil = this.time + .56; this.rival.animator?.play("bossWindup") || this.rival.animator?.play("attack"); }
   triggerRivalStrike() { this.rival.animator?.play("attack"); }
+  setBossTelegraph(active, radius = 4.4) {
+    this.bossTelegraph.visible = Boolean(active);
+    this.bossTelegraphEdge.visible = Boolean(active);
+    this.bossTelegraph.scale.setScalar(radius);
+    this.bossTelegraphEdge.scale.setScalar(radius);
+  }
   triggerRivalHit() { this.rivalHitUntil = this.time + .22; this.rival.animator?.play("hit"); }
   triggerPlayerHit() { this.playerHitUntil = this.time + .2; this.player.animator?.play("hit"); }
   onFrame(callback) { this.frames.push(callback); }
@@ -241,6 +263,12 @@ export class Arena {
     const speed = Math.hypot(this.playerVelocity.x, this.playerVelocity.z);
     const moving = speed > .2;
     const dist = p.distanceTo(this.rival.root.position);
+    if (this.bossTelegraph.visible) {
+      this.bossTelegraph.position.x = this.rival.root.position.x;
+      this.bossTelegraph.position.z = this.rival.root.position.z;
+      this.bossTelegraphEdge.position.x = this.rival.root.position.x;
+      this.bossTelegraphEdge.position.z = this.rival.root.position.z;
+    }
     this.player.animator?.setLocomotion(moving);
     this.player.animator?.update(dt);
     if (moving) this.player.root.rotation.y = Math.atan2(this.playerVelocity.x, this.playerVelocity.z);
@@ -324,6 +352,11 @@ export class Arena {
     cancelAnimationFrame(this.raf);
     window.removeEventListener("resize", this.resize);
     this.renderer.dispose();
+    this.scene.traverse(node => {
+      if (!node.isMesh) return;
+      node.geometry?.dispose();
+      for (const material of Array.isArray(node.material) ? node.material : [node.material]) material?.dispose();
+    });
     this.host.replaceChildren();
   }
 }
